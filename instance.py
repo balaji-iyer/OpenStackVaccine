@@ -5,13 +5,15 @@ Script accomplishes the following tasks.
 """
 import os
 import sys
-import subprocess
 import util
 
 class Instance:
     def __init__(self):
         # Load module novaclient in unix system
-        if 0 != subprocess.call("module load novaclient"):
+        try:
+            cmd = os.popen("module load novaclient")
+            exec(cmd)
+        except:
             assert "module novaclient could not be loaded"
 
         # import novaclient in python

@@ -16,6 +16,19 @@ class Instance:
         except:
             assert "module novaclient could not be loaded"
 
+        if not os.path.isfile("~/.futuregrid/novarc"):
+            try:
+                cmd = os.popen("module load cloudmesh")
+                exec(cmd)
+            except:
+                assert "cloudmesh not loaded"
+            try:
+                cmd2 = os.popen("cm-manage config sierra-openstack-grizzly")
+                exec(cmd2)
+            except:
+                assert "novarc not created"
+
+
         # import novaclient in python
         try:
             client = util.get_module("novaclient", "client")

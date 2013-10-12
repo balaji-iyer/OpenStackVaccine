@@ -9,29 +9,9 @@ import util
 
 class Instance:
     def __init__(self):
-        # Load module novaclient in unix system
-        try:
-            cmd = os.popen("module load novaclient")
-            exec(cmd)
-        except:
-            assert "module novaclient could not be loaded"
-
-        if not os.path.isfile(os.path.expanduser("~/.futuregrid/novarc")):
-            try:
-                cmd = os.popen("module load cloudmesh")
-                exec(cmd)
-            except:
-                assert "cloudmesh not loaded"
-            try:
-                cmd2 = os.popen("cm-manage config sierra-openstack-grizzly")
-                exec(cmd2)
-            except:
-                assert "novarc not created"
-
-
         # import novaclient in python
         try:
-            client = util.get_module("client", "novaclient")
+            client = util.get_module("client","novaclient")
         except Exception:
             assert "novaclient module cannot be loaded"
 

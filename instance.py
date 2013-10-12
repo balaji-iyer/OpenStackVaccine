@@ -18,13 +18,9 @@ class Instance:
         password = os.getenv('OS_PASSWORD')
         auth_url = os.getenv('OS_AUTH_URL')
 
-        return client.Client(username=username,
-                                api_key=password,
-                                project_id=tenant_name,
-                                auth_url=auth_url,
-                                service_type="compute")
+        return client.Client(username=username, api_key=password, project_id=tenant_name, auth_url=auth_url, service_type="compute")
 
 if __name__ == "__main__":
     ins = Instance()
-    client = ins.get_client()
-    client.flavors.list()
+    nt = ins.get_client()
+    nt.flavors.list()

@@ -6,7 +6,7 @@ Script accomplishes the following tasks.
 import os
 import sys
 import util
-from novaclient import client
+from novaclient.v1_1 import client
 
 class Instance:
     def __init__(self):
@@ -18,9 +18,9 @@ class Instance:
         password = os.getenv('OS_PASSWORD')
         auth_url = os.getenv('OS_AUTH_URL')
 
-        return client.Client(username=username, api_key=password, project_id=tenant_name, auth_url=auth_url, service_type="compute")
+        return client.Client(username, password, tenant_name, auth_url, insecure=True, service_type="compute")
 
 if __name__ == "__main__":
     ins = Instance()
     nt = ins.get_client()
-    nt.flavors.list()
+    print nt.flavors.list()

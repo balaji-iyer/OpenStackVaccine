@@ -2,7 +2,7 @@
 
 module load novaclient
 
-if test ! -f ${HOME}/.futuregid/novarc
+if [! -f ${HOME}/.futuregid/novarc]
 then
      module load cloudmesh
      cm-manage config sierra-openstack-grizzly

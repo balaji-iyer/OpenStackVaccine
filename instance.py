@@ -12,7 +12,7 @@ class Instance:
     def __init__(self):
         # import novaclient in python
         try:
-            client = util.get_module("client","novaclient")
+            self.client = util.get_module("client","novaclient")
         except Exception:
             assert "novaclient module cannot be loaded"
 

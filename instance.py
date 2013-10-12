@@ -16,7 +16,7 @@ class Instance:
         except:
             assert "module novaclient could not be loaded"
 
-        if not os.path.isfile("~/.futuregrid/novarc"):
+        if not os.path.isfile(os.path.expanduser("~/.futuregrid/novarc")):
             try:
                 cmd = os.popen("module load cloudmesh")
                 exec(cmd)

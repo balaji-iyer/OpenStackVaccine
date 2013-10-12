@@ -21,7 +21,8 @@ class Instance:
         return client.Client(username=username,
                                 api_key=password,
                                 project_id=tenant_name,
-                                auth_url=auth_url)
+                                auth_url=auth_url,
+                                service_type="compute")
 
 if __name__ == "__main__":
     ins = Instance()

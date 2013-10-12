@@ -11,10 +11,8 @@ class Instance:
     client = None
     def __init__(self):
         # import novaclient in python
-        try:
+            import pdb;pdb.set_trace()
             self.client = util.get_module("client","novaclient")
-        except Exception:
-            assert "novaclient module cannot be loaded"
 
     def get_client(self):
         username = os.getenv('OS_USERNAME')

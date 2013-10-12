@@ -6,13 +6,11 @@ Script accomplishes the following tasks.
 import os
 import sys
 import util
+from novaclient import client
 
 class Instance:
-    client = None
     def __init__(self):
-        # import novaclient in python
-            import pdb;pdb.set_trace()
-            self.client = util.get_module("client","novaclient")
+        pass
 
     def get_client(self):
         username = os.getenv('OS_USERNAME')

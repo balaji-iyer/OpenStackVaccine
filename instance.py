@@ -18,7 +18,7 @@ class Instance:
         password = os.getenv('OS_PASSWORD')
         auth_url = os.getenv('OS_AUTH_URL')
 
-        return self.client.Client(username=username,
+        return client.Client(username=username,
                                 api_key=password,
                                 project_id=tenant_name,
                                 auth_url=auth_url)

@@ -31,7 +31,7 @@ class Instance:
 
         # import novaclient in python
         try:
-            client = util.get_module("novaclient", "client")
+            client = util.get_module("client", "novaclient")
         except Exception:
             assert "novaclient module cannot be loaded"
 

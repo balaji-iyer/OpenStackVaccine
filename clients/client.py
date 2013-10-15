@@ -5,20 +5,29 @@
 """
 
 class Client:
-    def __init__(self):
-        pass
+    def __init__(self, instances, menaces, processes, freq, freq_unit):
+        self["instances"] = instances
+        self["menaces"] = menaces
+        self["frequency"] = freq
+        self["freq_unit"] = freq_unit
+        self["processes"] = processes
+        self["process2inst"] = {}
+        self["id2inst"] = {}
 
-    def terminate_instance(self, instaceId):
-        pass
+        for inst in instances:
+            self["id2inst"][inst["id"]] = inst
 
-    def delete_volume(self, volumeId):
-        pass
+    def kill_instance(self, instaceId):
+        raise NotImplementedError
+
+    def kill_volume(self, instanceId):
+        raise NotImplementedError
 
     def list_instances(self):
-        pass
+        raise NotImplementedError
 
     def list_volumes(self):
-        pass
+        raise NotImplementedError
 
     def kill_process(self, instanceId, processId):
-        pass
+        raise NotImplementedError

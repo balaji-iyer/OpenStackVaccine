@@ -33,6 +33,6 @@ if __name__ == "__main__":
 	os_client.client.servers.list()
 	os_client.get_image_list()
 	fl = os_client.client.flavors.find(ram=512);
-	imL = os_client.client.images.list()
+	imL = [x for x in os_client.client.images.list() if x.name.find("ubuntu") > -1]
 	if len(imL) > 0:
 		os_client.client.servers.create("my-server", imL[0], flavor=fl)

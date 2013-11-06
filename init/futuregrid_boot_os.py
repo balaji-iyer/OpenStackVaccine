@@ -22,7 +22,17 @@ class Instance:
         for flavor in self.client.flavors.list():
             print flavor
 
+    def get_image_list(self):
+        for image in self.client.images.list():
+            print image
+
 if __name__ == "__main__":
 	import pdb;pdb.set_trace();
 	os_client = Instance();
 	os_client.get_flavor_list();
+	os_client.client.servers.list()
+	os_client.get_image_list()
+	fl = os_client.client.flavors.find(ram=512);
+	imL = os_client.client.images.list()
+	if len(imL) > 0:
+		os_client.client.servers.create("my-server", imL[0], flavor=fl)

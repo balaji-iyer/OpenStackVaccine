@@ -5,12 +5,13 @@ class OS_Client(Client):
         self["handle"] = client.Client(os_auth_info["username"],
                                        os_auth_info["tenant_name"],
                                        os_auth_info["password"],
-                                       os_auth_info["auth_url"], 
+                                       os_auth_info["auth_url"],
                                        insecure=True,
                                        service_type="compute")
 
 
     def kill_instance(self, instanceId):
+        import pdb;pdb.set_trace()
         instance = self["id2inst"].get(instanceId, None)
         if instance == None:
             raise Exception
@@ -19,7 +20,4 @@ class OS_Client(Client):
             raise Exception
 
         self["handle"].server.stop(instanceId);
-        
-        
-
 

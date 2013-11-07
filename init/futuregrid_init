@@ -11,6 +11,6 @@ then
 fi
 . ${NOVARC}
 
-python ${HOME}/OpenStackVaccine/instance.py
+python ${HOME}/OpenStackVaccine/init/futuregrid_boot_os.py
 
 

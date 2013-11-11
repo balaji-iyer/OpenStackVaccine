@@ -7,7 +7,7 @@
 class Client:
     def __init__(self, instances, menaces, processes, freq, freq_unit):
         import pdb;pdb.set_trace();
-        self["instances"] = instances
+        self.instances = instances
         self["menaces"] = menaces
         self["frequency"] = freq
         self["freq_unit"] = freq_unit

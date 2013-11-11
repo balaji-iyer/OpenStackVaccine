@@ -2,7 +2,7 @@ from novaclient.v1_1 import client
 from client import Client
 class OS_Client(Client):
     def __init__(self, instances, menaces, processes, freq, freq_unit, os_auth_info):
-        super(self, instances, menaces, processes, freq, freq_unit)
+        Client.__init__(self, instances, menaces, processes, freq, freq_unit)
         self.handle = client.Client(os_auth_info["username"],
                                        os_auth_info["tenant_name"],
                                        os_auth_info["password"],

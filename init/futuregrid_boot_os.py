@@ -30,7 +30,7 @@ class Instance:
     def boot_instance(self, count):
         instances = []
         for i in xrange(count):
-            if self.client.servers.find(name="my-server-%s" %i) == None:
+            if "my-server-%s" %i in [server.id for server in self.client.servers.list()]:
                 flavor = self.client.flavors.find(ram=512);
                 instance = None
                 if flavor == None:

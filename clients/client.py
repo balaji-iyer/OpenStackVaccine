@@ -31,3 +31,18 @@ class Client:
 
     def kill_process(self, instanceId, processId):
         raise NotImplementedError
+
+    def fail_DNS(self):
+        raise NotImplementedError
+
+    def flood_network(self):
+        raise NotImplementedError
+
+    def crashCPU(self, instanceId):
+        raise NotImplementedError
+
+    def crashIO(self, instanceId):
+        raise NotImplementedError
+
+    def detachVolume(self, instanceId):
+        raise NotImplementedError

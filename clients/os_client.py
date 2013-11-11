@@ -22,3 +22,16 @@ class OS_Client(Client):
 
         self["handle"].server.stop(instanceId);
 
+    def kill_volume(self, instanceId):
+        pass
+
+    def list_instances(self):
+        pass
+
+    def list_volumes(self):
+        pass
+
+    def kill_process(self):
+        pass  
+
+

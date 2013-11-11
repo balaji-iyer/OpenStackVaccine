@@ -20,6 +20,7 @@ class TestOSClient:
 
 if __name__ == "__main__":
         client = Instance()
+        import pdb;pdb.set_trace()
         inst_info = client.boot_instance(1);
 
         test_client = TestOSClient(inst_info,

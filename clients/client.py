@@ -8,15 +8,15 @@ class Client:
     def __init__(self, instances, menaces, processes, freq, freq_unit):
         import pdb;pdb.set_trace();
         self.instances = instances
-        self["menaces"] = menaces
-        self["frequency"] = freq
-        self["freq_unit"] = freq_unit
-        self["processes"] = processes
-        self["process2inst"] = {}
-        self["id2inst"] = {}
+        self.menaces = menaces
+        self.frequency = freq
+        self.freq_unit = freq_unit
+        self.processes = processes
+        self.process2inst = {}
+        self.id2inst = {}
 
         for inst in instances:
-            self["id2inst"][inst["id"]] = inst
+            self.id2inst[inst["id"]] = inst
 
     def kill_instance(self, instaceId):
         raise NotImplementedError

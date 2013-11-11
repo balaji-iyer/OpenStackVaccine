@@ -36,7 +36,7 @@ class Instance:
                 raise Exception
             imL = [x for x in self.client.images.list() if x.name.find("ubuntu") > -1]
             if len(imL) > 0:
-                instance = self.client.servers.create("my-server-" + i, imL[0], flavor=flavor)
+                instance = self.client.servers.create("my-server-%s" %i, imL[0], flavor=flavor)
 
             status = instance.status
             #Poll at 5 second interval, until status is no longer build

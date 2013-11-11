@@ -47,8 +47,8 @@ class Instance:
 
             floating_ip = self.attach_floating_ips(instance)
             volume = self.attach_volume(instance, 2, "my-vol-i", "/dev/vdb")
-            instances.push({
-                    "instance": instance.id,
+            instances.append({
+                    "id": instance.id,
                     "floating_ip": floating_ip,
                     "volume": volume.id
 

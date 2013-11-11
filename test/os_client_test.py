@@ -19,7 +19,6 @@ class TestOSClient:
         assert instance == None
 
 if __name__ == "__main__":
-        import pdb;pdb.set_trace()
         client = Instance()
         inst_info = client.boot_instance(1);
 

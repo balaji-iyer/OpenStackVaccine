@@ -72,10 +72,7 @@ class Instance:
             for vol in attached_volumes:
                 assert vol.device != device_name
 
-        volume = self.client.volumes.create(
-                    size=size,
-                    display_name=disp_name,
-                    display_description=discription)
+        volume = self.client.volumes.create(size)
 
         assert volume != None, "Failed to get volume"
         assert volume.name == disp_name

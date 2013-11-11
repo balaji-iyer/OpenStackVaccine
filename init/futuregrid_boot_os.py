@@ -32,7 +32,7 @@ class Instance:
         for i in xrange(count):
             flavor = self.client.flavors.find(ram=512);
             instance = None
-            if len(flavor) == 0:
+            if flavor == None:
                 raise Exception
             imL = [x for x in self.client.images.list() if x.name.find("ubuntu") > -1]
             if len(imL) > 0:

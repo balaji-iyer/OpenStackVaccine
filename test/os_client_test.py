@@ -4,6 +4,7 @@ import os
 import time
 class TestOSClient:
     def __init__(self, instances, menaces, processes, freq, freq_unit, os_auth_info):
+        import pdb;pdb.set_trace()
         self.client = OS_Client(instances, menaces, processes, freq, freq_unit, os_auth_info)
         assert self.client != None
 
@@ -16,11 +17,10 @@ class TestOSClient:
         time.sleep(5)
 
         instance = self.client.get_instance(instanceId)
-        assert instance == None
+        assert instance.status == "SHUTOFF"
 
 if __name__ == "__main__":
         client = Instance()
-        import pdb;pdb.set_trace()
         inst_info = client.boot_instance(1);
 
         test_client = TestOSClient(inst_info,
@@ -30,8 +30,8 @@ if __name__ == "__main__":
                                 1,
                                 {
                                     "username": os.getenv('OS_USERNAME'),
-                                    "tenant_name": os.getenv('OS_TENENT_NAME'),
+                                    "tenant_name": os.getenv('OS_TENANT_NAME'),
                                     "password": os.getenv('OS_PASSWORD'),
                                     "auth_url": os.getenv('OS_AUTH_URL')
                                })
-        test_client.test_kill_instance(inst_info["id"])
+        test_client.test_kill_instance(inst_info[0]["id"])

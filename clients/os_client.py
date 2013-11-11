@@ -4,8 +4,8 @@ class OS_Client(Client):
     def __init__(self, instances, menaces, processes, freq, freq_unit, os_auth_info):
         Client.__init__(self, instances, menaces, processes, freq, freq_unit)
         self.handle = client.Client(os_auth_info["username"],
-                                       os_auth_info["tenant_name"],
                                        os_auth_info["password"],
+                                       os_auth_info["tenant_name"],
                                        os_auth_info["auth_url"],
                                        insecure=True,
                                        service_type="compute")
@@ -13,11 +13,11 @@ class OS_Client(Client):
 
     def kill_instance(self, instanceId):
         import pdb;pdb.set_trace()
-        instance = self["id2inst"].get(instanceId, None)
+        instance = self.id2inst.get(instanceId, None)
         if instance == None:
             raise Exception
 
-        if not "kill_instance" in self["menaces"]:
+        if not "kill_instance" in self.menaces:
             raise Exception
         server = self.get_instance(instanceId)
         if server != None:

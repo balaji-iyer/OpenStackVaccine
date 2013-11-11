@@ -30,29 +30,30 @@ class Instance:
     def boot_instance(self, count):
         instances = []
         for i in xrange(count):
-            flavor = self.client.flavors.find(ram=512);
-            instance = None
-            if flavor == None:
-                raise Exception
-            imL = [x for x in self.client.images.list() if x.name.find("ubuntu") > -1]
-            if len(imL) > 0:
-                instance = self.client.servers.create("my-server-%s" %i, imL[0], flavor=flavor)
+            if self.client.servers.find(name="my-server-%s" %i) == None:
+                flavor = self.client.flavors.find(ram=512);
+                instance = None
+                if flavor == None:
+                    raise Exception
+                imL = [x for x in self.client.images.list() if x.name.find("ubuntu") > -1]
+                if len(imL) > 0:
+                    instance = self.client.servers.create("my-server-%s" %i, imL[0], flavor=flavor)
 
-            status = instance.status
-            #Poll at 5 second interval, until status is no longer build
-            while status == 'BUILD':
-                time.sleep(5)
-                instance = self.client.servers.get(instance.id)
                 status = instance.status
+                #Poll at 5 second interval, until status is no longer build
+                while status == 'BUILD':
+                    time.sleep(5)
+                    instance = self.client.servers.get(instance.id)
+                    status = instance.status
 
-            floating_ip = self.attach_floating_ips(instance)
-            volume = self.attach_volume(instance, 2, "my-vol-i", "/dev/vdb")
-            instances.append({
-                    "id": instance.id,
-                    "floating_ip": floating_ip,
-                    "volume": volume.id
+                floating_ip = self.attach_floating_ips(instance)
+                volume = self.attach_volume(instance, 2, "my-vol", "/dev/vdb")
+                instances.append({
+                        "id": instance.id,
+                        "floating_ip": floating_ip,
+                        "volume": volume.id
 
-                })
+                    })
         return instances
 
     def attach_floating_ips(self, instance):

@@ -30,9 +30,11 @@ class Instance:
     def boot_instance(self, count):
         instances = []
         for i in xrange(count):
+            instance = None
+            floating_ip = None
+            volume = None
             if "my-server-%s" %i not in [server.name for server in self.client.servers.list()]:
                 flavor = self.client.flavors.find(ram=512);
-                instance = None
                 if flavor == None:
                     raise Exception
                 imL = [x for x in self.client.images.list() if x.name.find("ubuntu") > -1]
@@ -46,17 +48,20 @@ class Instance:
                     instance = self.client.servers.get(instance.id)
                     status = instance.status
 
-                floating_ip = self.attach_floating_ips(instance)
-                #volume = self.attach_volume(instance, 2, "my-vol", "/dev/vdb")
-                instances.append({
-                        "id": instance.id,
-                        "floating_ip": floating_ip
-               #         "volume": volume.id
-
-                    })
+            floating_ip = self.attach_floating_ips(instance)
+            volume = self.attach_volume(instance, 2, "my-vol", "/dev/vdb")
+            instances.append({
+                "id": instance.id,
+                "floating_ip": floating_ip,
+                "volume": volume.id
+            })
         return instances
 
     def attach_floating_ips(self, instance):
+        floating_ip_list = self.client.floating_ips.list()
+        for floating_ip in floating_ip_list:
+            if floating_ip.instance_id == instance.id:
+                return floating_ip
         floating_ip = self.client.floating_ips.create()
         if instance != None:
             instance.add_floating_ip(floating_ip)
@@ -69,9 +74,9 @@ class Instance:
 
         attached_volumes = self.client.volumes.get_server_volumes(instance.id)
         if len(attached_volumes) > 0:
-            for vol in attached_volumes:
-                assert vol.device != device_name
-
+            for volume in attached_volumes:
+                if volume.device == device_name:
+                    return volume
         volume = self.client.volumes.create(size)
 
         assert volume != None, "Failed to get volume"

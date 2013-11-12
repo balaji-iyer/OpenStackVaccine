@@ -33,21 +33,28 @@ class Instance:
             instance = None
             floating_ip = None
             volume = None
-            if "my-server-%s" %i not in [server.name for server in self.client.servers.list()]:
-                flavor = self.client.flavors.find(ram=512);
-                if flavor == None:
-                    raise Exception
-                imL = [x for x in self.client.images.list() if x.name.find("ubuntu") > -1]
-                if len(imL) > 0:
-                    instance = self.client.servers.create("my-server-%s" %i, imL[0], flavor=flavor)
+            instance_found = False
+            for server in self.client.servers.list():
+                if "my-server-%s" % i not in server.name:
+                    instance_found = True
+                    instance = server
+                    break;
+                if not instance_found:
+                    flavor = self.client.flavors.find(ram=512);
+                    if flavor == None:
+                        raise Exception
+                    imL = [x for x in self.client.images.list() if x.name.find("ubuntu") > -1]
+                    if len(imL) > 0:
+                        instance = self.client.servers.create("my-server-%s" %i, imL[0], flavor=flavor)
 
-                status = instance.status
-                #Poll at 5 second interval, until status is no longer build
-                while status == 'BUILD':
-                    time.sleep(5)
-                    instance = self.client.servers.get(instance.id)
                     status = instance.status
-
+                    #Poll at 5 second interval, until status is no longer build
+                    while status == 'BUILD':
+                        time.sleep(5)
+                        instance = self.client.servers.get(instance.id)
+                        status = instance.status
+            if not instance:
+                raise Exception
             floating_ip = self.attach_floating_ips(instance)
             volume = self.attach_volume(instance, 2, "my-vol", "/dev/vdb")
             instances.append({

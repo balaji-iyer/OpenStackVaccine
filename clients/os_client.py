@@ -23,14 +23,14 @@ class OS_Client(Client):
 
     def kill_volume(self, instanceId):
 	instance_obj = self.id2inst.get(instanceId, None)
-	
-	if instance_obj = None:
+
+	if instance_obj == None:
 		raise Exception
-	
+
 	volume_id = instance_obj["volume"]
 	volume = self.handle.volumes.get(volume_id)
 	assert volume != None
-	
+
 	self.handle.volumes.delete_server_volume(instanceId, volume.device)
 
     def list_instances(self):

@@ -13,9 +13,7 @@ class OS_Client(Client):
 
 
     def kill_instance(self, instanceId):
-        instance = self.id2inst.get(instanceId, None)
-        if instance == None:
-            raise Exception
+        instance = self.get_instance(instanceId)
 
         if not "kill_instance" in self.menaces:
             raise Exception
@@ -24,7 +22,16 @@ class OS_Client(Client):
             server.stop();
 
     def kill_volume(self, instanceId):
-        pass
+	instance_obj = self.id2inst.get(instanceId, None)
+	
+	if instance_obj = None:
+		raise Exception
+	
+	volume_id = instance_obj["volume"]
+	volume = self.handle.volumes.get(volume_id)
+	assert volume != None
+	
+	self.handle.volumes.delete_server_volume(instanceId, volume.device)
 
     def list_instances(self):
         pass
@@ -37,5 +44,9 @@ class OS_Client(Client):
 
     def get_instance(self, instanceId):
         assert instanceId != None
+        instance = self.id2inst.get(instanceId, None)
+        if instance == None:
+            raise Exception
+
         return self.handle.servers.get(instanceId)
 

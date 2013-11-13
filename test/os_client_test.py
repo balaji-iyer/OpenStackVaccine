@@ -4,7 +4,6 @@ import os
 import time
 class TestOSClient:
     def __init__(self, instances, menaces, processes, freq, freq_unit, os_auth_info):
-        import pdb;pdb.set_trace()
         self.client = OS_Client(instances, menaces, processes, freq, freq_unit, os_auth_info)
         assert self.client != None
 
@@ -14,10 +13,25 @@ class TestOSClient:
         assert instance != None
 
         self.client.kill_instance(instanceId)
-        time.sleep(5)
 
+        time.sleep(5)
         instance = self.client.get_instance(instanceId)
         assert instance.status == "SHUTOFF"
+        print "Instance successfully shutoff"
+
+        self.client._start_instance(instanceId)
+        time.sleep(5)
+        assert instance.status == "ACTIVE"
+        print "Instance successfully restarted"
+
+    def test_kill_volume(self, instanceId, volume_id):
+        instance = self.client.get_instance(instanceId)
+        assert instance != None
+
+        self.client.kill_volume(instanceId, volume_id)
+
+        time.sleep(5)
+        volume = self.client.get_volume(instanceId, volume_id)
 
 if __name__ == "__main__":
         client = Instance()
@@ -35,3 +49,5 @@ if __name__ == "__main__":
                                     "auth_url": os.getenv('OS_AUTH_URL')
                                })
         test_client.test_kill_instance(inst_info[0]["id"])
+        import pdb;pdb.set_trace()
+        test_client.test_kill_volume(inst_info[0]["id"], inst_info[0]["volume"])

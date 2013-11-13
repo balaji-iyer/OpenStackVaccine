@@ -58,7 +58,19 @@ class OS_Client(Client):
         if instance_obj == None:
             raise Exception
 
-        return self.handle.volumes.get(volume_id)
+        volumes = self.handle.volumes.get_server_volumes(instanceId)
 
+        assert len(volumes) > 0
 
+        for volume in volumes:
+            if volume.volumeId == volume_id:
+                return volume
+            
+        return None
+
+    def _reattach_volume(self, volume):
+        vol = self.handle.volumes.create_server_volume(
+                server_id=volume.serverId,
+                volume_id=volume.volumeId,
+                device=volume.device)
 

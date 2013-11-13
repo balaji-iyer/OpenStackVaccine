@@ -27,11 +27,13 @@ class TestOSClient:
     def test_kill_volume(self, instanceId, volume_id):
         instance = self.client.get_instance(instanceId)
         assert instance != None
-
+        volume = self.client.get_volume(instanceId, volume_id)
         self.client.kill_volume(instanceId, volume_id)
 
         time.sleep(5)
-        volume = self.client.get_volume(instanceId, volume_id)
+        assert self.client.get_volume(instanceId, volume_id) == None
+
+        self.client._reattach_volume(volume)
 
 if __name__ == "__main__":
         client = Instance()

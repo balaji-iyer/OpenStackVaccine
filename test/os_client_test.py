@@ -21,6 +21,7 @@ class TestOSClient:
 
         self.client._start_instance(instanceId)
         time.sleep(5)
+	instance = self.client.get_instance(instanceId)
         assert instance.status == "ACTIVE"
         print "Instance successfully restarted"
 

@@ -101,7 +101,6 @@ class Instance:
 
 
 if __name__ == "__main__":
-    import pdb;pdb.set_trace();
     os_client = Instance()
     os_client.get_flavor_list()
     os_client.get_image_list()

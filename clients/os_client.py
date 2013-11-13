@@ -51,7 +51,7 @@ class OS_Client(Client):
 
         if server != None:
             server.stop();
-    
+
     def get_volume(self, instanceId, volume_id):
         instance_obj = self.id2inst.get(instanceId, None)
         if instance_obj == None:
@@ -62,7 +62,7 @@ class OS_Client(Client):
         for volume in volumes:
             if volume.volumeId == volume_id:
                 return volume
-            
+
         return None
 
     def _reattach_volume(self, volume):

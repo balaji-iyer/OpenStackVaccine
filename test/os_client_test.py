@@ -21,7 +21,7 @@ class TestOSClient:
 
         self.client._start_instance(instanceId)
         time.sleep(5)
-	instance = self.client.get_instance(instanceId)
+        instance = self.client.get_instance(instanceId)
         assert instance.status == "ACTIVE"
         print "Instance successfully restarted"
 
@@ -33,8 +33,11 @@ class TestOSClient:
 
         time.sleep(5)
         assert self.client.get_volume(instanceId, volume_id) == None
+        print "Volume successfully detached"
 
         self.client._reattach_volume(volume)
+        assert self.client.get_volume(instanceId, volume_id) == volume
+        print "Volume successfully reattached"
 
 if __name__ == "__main__":
         client = Instance()

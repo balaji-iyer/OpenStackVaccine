@@ -21,7 +21,7 @@ class OS_Client(Client):
     def kill_volume(self, instanceId, volume_id):
         volume = self.get_volume(instanceId, volume_id)
         assert volume != None
-        self.handle.volumes.delete_server_volume(instanceId, volume.device)
+        self.handle.volumes.delete_server_volume(instanceId, volume.id)
 
     def list_instances(self):
         pass
@@ -58,8 +58,6 @@ class OS_Client(Client):
             raise Exception
 
         volumes = self.handle.volumes.get_server_volumes(instanceId)
-
-        assert len(volumes) > 0
 
         for volume in volumes:
             if volume.volumeId == volume_id:

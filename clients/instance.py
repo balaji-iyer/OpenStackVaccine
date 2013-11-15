@@ -6,10 +6,10 @@
 
 class Instance:
     def __init__(self, instance_id, floating_ip, fixed_ip, name):
-        self["id"] = instance_id
-        self["floating_ip"] = floating_ip
-        self["fixed_ip"] = fixed_ip
-        self["name"] = name
+        self.id = instance_id
+        self.floating_ip = floating_ip
+        self.fixed_ip = fixed_ip
+        self.name = name
 
 
     def fail_volume(self):

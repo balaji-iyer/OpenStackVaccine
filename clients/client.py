@@ -20,13 +20,13 @@ class Client:
     def kill_instance(self, instaceId):
         raise NotImplementedError
 
-    def kill_volume(self, instanceId):
+    def kill_volume(self, instanceId, volume_id):
         raise NotImplementedError
 
     def list_instances(self):
         raise NotImplementedError
 
-    def list_volumes(self):
+    def list_volumes(self, instanceId):
         raise NotImplementedError
 
     def kill_process(self, instanceId, processId):
@@ -46,3 +46,9 @@ class Client:
 
     def detachVolume(self, instanceId):
         raise NotImplementedError
+
+    def get_instance(self, instanceId):
+        raise NotImplementedError
+
+    def get_volume(self, instanceId, volume_id):
+       raise NotImplementedError

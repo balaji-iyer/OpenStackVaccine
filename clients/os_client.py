@@ -26,7 +26,7 @@ class OS_Client(Client):
     def list_instances(self):
         pass
 
-    def list_volumes(self):
+    def list_volumes(self, instanceId):
         pass
 
     def kill_process(self):

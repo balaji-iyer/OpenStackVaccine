@@ -4,7 +4,9 @@ from controller.selector import Selector
 from controller.scheduler import Scheduler
 from optparse import OptionParser
 import json
+import logging
 import os
+import pprint
 import sys
 
 CLIENTS_FILE = "./config/clients.json"
@@ -20,10 +22,12 @@ class OpenStackVaccine:
 
 if __name__ == "__main__":
         parser = OptionParser()
+        logging.basicConfig(level=logging.INFO)
         parser.add_option("-c", "--client", dest="client", type="string")
         (options, args) = parser.parse_args()
 
-        client_file = open(CLIENTS_FILE)
+        logging.info("Running OpenStackVaccine for client %s" % options.client)
+        client_file = open(os.path.abspath(CLIENTS_FILE))
         clients_json = json.load(client_file)
 
         client = None
@@ -31,22 +35,25 @@ if __name__ == "__main__":
         for client_json in clients_json:
             if options.client == client_json["name"]:
                 client = client_json
+                logging.info("Client Info:%s", json.dumps(client, sort_keys=True, indent=4))
 
         if client == None:
-            print "Client %s not found. Check clients.json file" % options.client
+            logging.error("Client %s not found. Check clients.json file" % options.client)
             sys.exit(-1)
 
         # Getting auth info for the client
-        auth_file = open(AUTH_FILE)
+        auth_file = open(os.path.abspath(AUTH_FILE))
         auth_json = json.load(auth_file)
 
         if client["name"] not in auth_json:
-            print "Auth Info not found in auth.json for client %s" % options.client
+            logging.error("Auth Info not found in auth.json for client %s" % options.client)
             sys.exit(-1)
 
-        auth_info = auth_json[client["name"]]
+        auth_info = auth_json.get(client["name"])
+        logging.info("Auth Info:%s" % json.dumps(auth_info, sort_keys=True, indent=4))
+        pprint.pprint(auth_info)
+
         osv = OpenStackVaccine(client, auth_info)
 
-        import pdb;pdb.set_trace()
         osv.scheduler.start(osv)
 

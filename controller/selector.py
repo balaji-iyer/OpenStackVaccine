@@ -1,6 +1,7 @@
 from menace import Menace
 import random
 import sys
+import logging
 
 class Selector:
     """ Selector class.
@@ -15,33 +16,38 @@ class Selector:
     def select_menace(self):
         menaces = self.client.menaces
         if menaces == None or len(menaces) == 0:
-            print "Menace list missing. Check clients.json"
+            logging.error("Menace list missing. Check clients.json")
             sys.exit(-1)
-
-        return self._select_random(menaces)
+        menace = self._select_random(menaces)
+        logging.info("Selecting Menace: %s" % menace)
+        return menace
 
 
     def select_instance(self):
         instances = self.client.list_instances()
 
         if instances == None or len(instances) == 0:
-            print "No instance up right now. Nothing to do"
+            logging.error("No instance up right now. Nothing to do")
+            # Donot kill, servers might come up eventually
             return None
-        return self._select_random(instances)
+
+        instance = self._select_random(instances)
+        logging.info("Selecting Instance: %s" % instance.id)
+        return instance
 
     def select_process(self, menace):
 
         if menace != Menace.KILL_PROCESS:
-            print "Wrong menace type: %s" % menace
+            logging.error("Wrong menace type: %s" % menace)
             sys.exit(-1)
 
         processes = self.client.processes
         if processes == None or len(processes) == 0:
-            print "Process list missing. Check clients.json"
+            logging.error("Process list missing. Check clients.json")
             sys.exit(-1)
 
-        return self._select_random(processes)
-
+        process = self._select_random(processes)
+        logging.info("Selecting process: %s" % process)
 
     def select_volume(self, client, instance):
         pass

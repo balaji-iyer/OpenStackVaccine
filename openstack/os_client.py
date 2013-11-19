@@ -1,5 +1,7 @@
 from novaclient.v1_1 import client
 from client import Client
+from menace import Menace
+import logging
 class OS_Client(Client):
     def __init__(self, menaces, processes, os_auth_info):
         Client.__init__(self, menaces, processes)
@@ -17,8 +19,8 @@ class OS_Client(Client):
     def kill_instance(self, instanceId):
         instance = self.get_instance(instanceId)
 
-        if not "kill_instance" in self.menaces:
-            raise Exception
+        if not Menace.KILL_INSTANCE in self.menaces:
+            logging.error("%s menace not found in client's menaces." % Menace.KILL_INSTANCE)
         try:
             self._stop_instance(instanceId)
         except:
@@ -86,9 +88,28 @@ class OS_Client(Client):
                 return volume
         return None
 
+    def get_attached_volumes(self, instanceId):
+        instance_obj = self.id2inst.get(instanceId, None)
+        if instance_obj == None:
+            raise Exception
+
+        volumes = self.handle.volumes.get_server_volumes(instanceId)
+        return volumes
     def _reattach_volume(self, volume):
         vol = self.handle.volumes.create_server_volume(
                 server_id=volume.serverId,
                 volume_id=volume.volumeId,
                 device=volume.device)
+
+    def can_apply_menace(self, menace):
+        return menace in self.menaces
+
+    def create_menace(self, menace, instance=None, process=None):
+        logging.error("creating menace type %s" % menace)
+        if menace == Menace.KILL_INSTANCE:
+            logging.info("killing instance with id: %s" % instance.id)
+            self.kill_instance(instance.id)
+        elif menace == Menace.FAIL_VOLUME:
+            logging.info("failing volume for instance %s")
+            self.kill_volume(instance.id, self.get_attached_volumes(instance.id)[0].id)
 

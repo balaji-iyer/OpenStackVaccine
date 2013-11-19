@@ -1,18 +1,19 @@
-"""
-    Scheduler class.
-    Schedules fault injections at specific time and frequency.
-"""
 from datetime import datetime
 from datetime import date
 from datetime import timedelta
 from menace import Menace
 from pytz import timezone
+import logging
 import os
 import sys
+import time
 
 SUNDAY = 6
 SATURDAY = 5
 class Scheduler:
+    """ Scheduler class.
+        Schedules fault injections at specific time and frequency.
+    """
     def __init__(self, conf):
         self.frequency = conf["frequency"]
         self.start_time = conf["start_time"] or 9;
@@ -22,9 +23,11 @@ class Scheduler:
         self.shall_run = True
 
     def start(self, osv):
+        import pdb;pdb.set_trace()
         while(self.shall_run):
             if self.shall_schedule():
                 self.schedule(osv)
+            time.sleep(60)
 
 
     def schedule(self, osv):
@@ -42,7 +45,7 @@ class Scheduler:
         if client != None:
             menace = osv.selector.select_menace()
             if menace == None:
-                print "Menace selection returned None. Check clients.json"
+                logging.error("Menace selection returned None. Check clients.json")
                 sys.exit(-1)
 
             process = None
@@ -53,7 +56,7 @@ class Scheduler:
 
             if client.can_apply_menace(menace):
                 client.create_menace(menace, instance, process)
-
+                self.last_scheduled = datetime.now(tz=self.timezone)
 
 
     def stop(self):
@@ -76,18 +79,22 @@ class Scheduler:
         day = date.today().weekday()
 
         if day == SUNDAY or day == SATURDAY:
+            logging.info("%s today. Take some rest" % "SUNDAY" if day - SATURDAY else "SATURDAY")
             return False;
 
         hour = time.hour
 
         if hour < self.start_time or hour > self.end_time:
+            logging.info("Post Office Hours. Go home. Get some life.")
             return False
 
         if self.last_scheduled != None:
 
             # office hours of the day / how many times to run = interval in hours * 3600
-            schedule_in_secs = (self.end_time - self.start_time) / self.frequency * 60 * 60
-            if self.last_scheduled + timedelta(seconds=schedule_in_secs) < time:
+            schedule_in_secs = float((self.end_time - self.start_time)) / self.frequency * 60 * 60
+            if self.last_scheduled + timedelta(seconds=schedule_in_secs) > time:
+                logging.info("Next Run in %s"
+                        % (self.last_scheduled + timedelta(seconds=schedule_in_secs) - time))
                 return False
         return True
-from OSV import OpenStackVaccine
+

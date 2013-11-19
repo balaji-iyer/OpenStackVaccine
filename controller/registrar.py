@@ -1,6 +1,7 @@
 import importlib
 import os
 import sys
+import logging
 class Registrar:
     """ Registers various clients and menaces.
         Stores them in a key-value store.
@@ -31,10 +32,11 @@ class Registrar:
             # SO/10675054 Notice . in front of wrapper.
             # This is to specify relative path of wrapper w.r.t package
             wrapper = importlib.import_module(".wrapper", self.client_dir.replace("/", "."))
-            #client_mod = __import__(self.client_dir.replace("/", "."))
         except ImportError:
-            print "Please check dir path. Ensure it has __init__.py file"
+            logging.error("Please check dir path. Ensure it has __init__.py file")
             sys.exit(-1)
+
+        logging.info("Getting client from %s.wrapper module" % self.client_dir.replace("/","."))
 
         self.client = wrapper.get_client(conf["menaces"], conf["processes"], auth_info)
 

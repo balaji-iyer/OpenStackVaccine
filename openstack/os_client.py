@@ -19,7 +19,10 @@ class OS_Client(Client):
 
         if not "kill_instance" in self.menaces:
             raise Exception
-        self._stop_instance(instanceId)
+        try:
+            self._stop_instance(instanceId)
+        except:
+            self._pause_instance(instanceId)
 
     def kill_volume(self, instanceId, volume_id):
         volume = self.get_volume(instanceId, volume_id)
@@ -46,14 +49,30 @@ class OS_Client(Client):
     def _start_instance(self, instanceId):
         instance = self.get_instance(instanceId)
 
-        if instance != None:
+        if (instance != None and
+                instance.status != "ACTIVE"):
             instance.start()
+
+    def _resume_instance(self, instanceId):
+        instance = self.get_instance(instanceId)
+
+        if (instance != None and
+                instance.status != "ACTIVE"):
+            instance.resume()
 
     def _stop_instance(self, instanceId):
         server = self.get_instance(instanceId)
 
-        if server != None:
+        if (server != None and
+                server.status == "ACTIVE"):
             server.stop();
+
+    def _pause_instance(self, instanceId):
+        server = self.get_instance(instanceId)
+
+        if (server != None and
+            server.status == "ACTIVE"):
+            server.pause();
 
     def get_volume(self, instanceId, volume_id):
         instance_obj = self.id2inst.get(instanceId, None)

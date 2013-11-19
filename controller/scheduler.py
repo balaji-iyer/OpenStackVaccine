@@ -2,20 +2,22 @@
     Scheduler class.
     Schedules fault injections at specific time and frequency.
 """
-import os
 from datetime import datetime
+from datetime import date
 from datetime import timedelta
-from OSV import OpenStackVaccine
-from menace.menace import Menace
+from menace import Menace
+from pytz import timezone
+import os
+import sys
 
 SUNDAY = 6
 SATURDAY = 5
 class Scheduler:
     def __init__(self, conf):
-        self.frequency = conf.frequency
-        self.start_time = conf.start_time or 9;
-        self.end_time = conf.end_time or 16
-        self.timezone = conf.timezone or os.environ['TZ']
+        self.frequency = conf["frequency"]
+        self.start_time = conf["start_time"] or 9;
+        self.end_time = conf["end_time"] or 16
+        self.timezone = timezone(conf["timezone"]) or os.environ['TZ']
         self.last_scheduled = None
         self.shall_run = True
 
@@ -38,15 +40,16 @@ class Scheduler:
         client = osv.registrar.get_client()
 
         if client != None:
-            menace = osv.selector.select_menace(client)
-            if menace != None:
-                return False
+            menace = osv.selector.select_menace()
+            if menace == None:
+                print "Menace selection returned None. Check clients.json"
+                sys.exit(-1)
 
             process = None
             if menace == Menace.KILL_PROCESS:
-                process = osv.selector.select_process(client, Menace.KILL_PROCESS)
+                process = osv.selector.select_process(Menace.KILL_PROCESS)
 
-            instance = osv.selector.select_instance(client, menace, process)
+            instance = osv.selector.select_instance()
 
             if client.can_apply_menace(menace):
                 client.create_menace(menace, instance, process)
@@ -70,7 +73,7 @@ class Scheduler:
         """
         time = datetime.now(tz=self.timezone)
 
-        day = datetime.weekday()
+        day = date.today().weekday()
 
         if day == SUNDAY or day == SATURDAY:
             return False;
@@ -87,3 +90,4 @@ class Scheduler:
             if self.last_scheduled + timedelta(seconds=schedule_in_secs) < time:
                 return False
         return True
+from OSV import OpenStackVaccine

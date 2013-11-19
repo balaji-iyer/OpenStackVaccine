@@ -1,19 +1,19 @@
 from controller.registrar import Registrar
+from recorder.recorder import Recorder
 from controller.selector import Selector
 from controller.scheduler import Scheduler
 from optparse import OptionParser
-from recorder.recorder import Recorder
 import json
 import os
 import sys
 
-CLIENTS_FILE="./configs/clients.json"
-AUTH_FILE="./configs/auth.json"
+CLIENTS_FILE = "./config/clients.json"
+AUTH_FILE = "./config/auth.json"
 
 class OpenStackVaccine:
     def __init__(self, conf, auth_info):
         self.registrar = Registrar(conf, auth_info)
-        self.selector = Selector()
+        self.selector = Selector(self.registrar.client)
         self.scheduler = Scheduler(conf)
         self.recorder = Recorder()
 
@@ -28,8 +28,8 @@ if __name__ == "__main__":
 
         client = None
 
-        for client_json in client_json:
-            if options.client == client_json.name:
+        for client_json in clients_json:
+            if options.client == client_json["name"]:
                 client = client_json
 
         if client == None:
@@ -45,6 +45,8 @@ if __name__ == "__main__":
             sys.exit(-1)
 
         auth_info = auth_json[client["name"]]
+        osv = OpenStackVaccine(client, auth_info)
 
-        ovs = OpenStackVaccine(client, auth_info)
+        import pdb;pdb.set_trace()
+        osv.scheduler.start(osv)
 

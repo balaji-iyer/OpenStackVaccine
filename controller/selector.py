@@ -1,4 +1,4 @@
-from menace.menace import Menace
+from menace import Menace
 import random
 import sys
 

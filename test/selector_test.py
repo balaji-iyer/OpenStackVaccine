@@ -1,6 +1,6 @@
 from controller.selector import Selector
 from controller.registrar import Registrar
-from menace.menace import Menace
+from menace import Menace
 import json
 
 

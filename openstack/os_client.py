@@ -35,20 +35,13 @@ class OS_Client(Client):
     def kill_process(self):
         pass
 
-    def get_instance(self, instanceId):
+    def get_instance(self, instanceId, latest=False):
         assert instanceId != None
-        instance = self.id2inst.get(instanceId, None)
+        instance = self.handle.servers.get(instanceId) if latest else self.id2inst.get(instanceId, None)
         if instance == None:
             raise Exception
 
-        inst = None
-        try:
-            if instance.status() == "ACTIVE":
-                inst = instance
-        except:
-            # do nothing
-            pass
-        return inst
+        return instance
 
     def _start_instance(self, instanceId):
         instance = self.get_instance(instanceId)

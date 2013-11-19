@@ -15,13 +15,13 @@ class TestOSClient:
         self.client.kill_instance(instanceId)
 
         time.sleep(5)
-        instance = self.client.get_instance(instanceId)
+        instance = self.client.get_instance(instanceId, latest=True)
         assert instance.status == "SHUTOFF"
         print "Instance successfully shutoff"
 
         self.client._start_instance(instanceId)
         time.sleep(5)
-        instance = self.client.get_instance(instanceId)
+        instance = self.client.get_instance(instanceId, latest=True)
         assert instance.status == "ACTIVE"
         print "Instance successfully restarted"
 

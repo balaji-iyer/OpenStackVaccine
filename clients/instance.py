@@ -5,11 +5,12 @@
 """
 
 class Instance:
-    def __init__(self, instance_id, floating_ip, fixed_ip, name):
+    def __init__(self, instance_id, floating_ip, fixed_ip, volumes, name):
         self.id = instance_id
         self.floating_ip = floating_ip
         self.fixed_ip = fixed_ip
         self.name = name
+        self.volumes = volumes
 
 
     def fail_volume(self):
@@ -36,7 +37,9 @@ class Instance:
     def remove_process(self):
         raise NotImplementedError
 
-    def __get_attached_volume(self):
+    def get_attached_volumes(self):
         raise NotImplementedError
 
+    def __reattach_volume(self):
+        raise NotImplementedError
 

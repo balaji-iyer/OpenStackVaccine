@@ -1,0 +1,23 @@
+[
+    {
+        name: "openstack",
+        owner: "OpenstackVaccine",
+        dir: "clients/openstack",
+        email: "kushal18@gmail.com",
+        mobile: "+1 352 871 5169",
+        frequency: 10,
+        start_time: 10,
+        end_time: 15,
+        timezone: "US/Eastern",
+        menaces: [
+            "stop_instance",
+            "kill_instance",
+            "detach_volume",
+            "kill_process",
+        ],
+        processes: [
+            "java",
+            "python"
+            ]
+    }
+]

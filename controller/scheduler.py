@@ -11,11 +11,11 @@ from menace.menace import Menace
 SUNDAY = 6
 SATURDAY = 5
 class Scheduler:
-    def __init__(self, frequency, start_time, end_time, timezone):
-        self.frequency = frequency
-        self.start_time = start_time or 9;
-        self.end_time = end_time or 16
-        self.timezone = timezone or os.environ['TZ']
+    def __init__(self, conf):
+        self.frequency = conf.frequency
+        self.start_time = conf.start_time or 9;
+        self.end_time = conf.end_time or 16
+        self.timezone = conf.timezone or os.environ['TZ']
         self.last_scheduled = None
         self.shall_run = True
 

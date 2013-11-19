@@ -8,10 +8,10 @@ class Registrar:
     def __init__(self, conf):
         assert "dir" in conf, \
                 "dir missing from client conf. Please check configs/clients.json"
-        
+
         assert "owner" in conf, \
                 "owner field needed in client conf. Please check configs/clients.json"
-        
+
         self.client = None
         self.name = conf.name
         self.client_dir = conf.dir
@@ -25,14 +25,19 @@ class Registrar:
         if "mobile" in conf:
             self.owner["mobile"] = conf.mobile
 
-    def register_client(self):
+        if "menaces" in conf:
+            self.menaces = conf.menaces
+
+        if "processes" in conf:
+            self.processes = conf.processes
+
         try:
             client_mod = __import__(self.client_dir.replace("/", "."))
         except ImportError:
             print "Please check dir path. Ensure it has __init__.py file"
             sys.exit(-1)
 
-        self.client = client_mod.get_client()
+        self.client = client_mod.get_client(self.menaces, self.processes)
 
 
     def get_client(self):

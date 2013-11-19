@@ -1,10 +1,10 @@
-from clients.os_client import OS_Client
+from openstack.os_client import OS_Client
 from init.futuregrid_boot_os import Instance
 import os
 import time
 class TestOSClient:
-    def __init__(self, instances, menaces, processes, freq, freq_unit, os_auth_info):
-        self.client = OS_Client(instances, menaces, processes, freq, freq_unit, os_auth_info)
+    def __init__(self, menaces, processes, os_auth_info):
+        self.client = OS_Client(menaces, processes, os_auth_info)
         assert self.client != None
 
 
@@ -42,12 +42,9 @@ class TestOSClient:
 if __name__ == "__main__":
         client = Instance()
         inst_info = client.boot_instance(1);
-
-        test_client = TestOSClient(inst_info,
-                                ["kill_instance"],
+        import pdb;pdb.set_trace()
+        test_client = TestOSClient(["kill_instance"],
                                 [],
-                                1,
-                                1,
                                 {
                                     "username": os.getenv('OS_USERNAME'),
                                     "tenant_name": os.getenv('OS_TENANT_NAME'),
@@ -55,5 +52,4 @@ if __name__ == "__main__":
                                     "auth_url": os.getenv('OS_AUTH_URL')
                                })
         test_client.test_kill_instance(inst_info[0]["id"])
-        import pdb;pdb.set_trace()
         test_client.test_kill_volume(inst_info[0]["id"], inst_info[0]["volume"])

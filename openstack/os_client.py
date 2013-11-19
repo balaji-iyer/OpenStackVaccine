@@ -1,14 +1,17 @@
 from novaclient.v1_1 import client
 from client import Client
 class OS_Client(Client):
-    def __init__(self, instances, menaces, processes, freq, freq_unit, os_auth_info):
-        Client.__init__(self, instances, menaces, processes, freq, freq_unit)
+    def __init__(self, menaces, processes, os_auth_info):
+        Client.__init__(self, menaces, processes)
         self.handle = client.Client(os_auth_info["username"],
                                        os_auth_info["password"],
                                        os_auth_info["tenant_name"],
                                        os_auth_info["auth_url"],
                                        insecure=True,
                                        service_type="compute")
+
+        for inst in self.handle.servers.list():
+            self.id2inst[inst.id] = inst
 
 
     def kill_instance(self, instanceId):
@@ -24,7 +27,7 @@ class OS_Client(Client):
         self.handle.volumes.delete_server_volume(instanceId, volume.id)
 
     def list_instances(self):
-        pass
+        return self.handle.servers.list()
 
     def list_volumes(self, instanceId):
         pass
@@ -38,7 +41,14 @@ class OS_Client(Client):
         if instance == None:
             raise Exception
 
-        return self.handle.servers.get(instanceId)
+        inst = None
+        try:
+            if instance.status() == "ACTIVE":
+                inst = instance
+        except:
+            # do nothing
+            pass
+        return inst
 
     def _start_instance(self, instanceId):
         instance = self.get_instance(instanceId)
@@ -62,7 +72,6 @@ class OS_Client(Client):
         for volume in volumes:
             if volume.volumeId == volume_id:
                 return volume
-
         return None
 
     def _reattach_volume(self, volume):

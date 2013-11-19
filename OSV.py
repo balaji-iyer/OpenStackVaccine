@@ -3,13 +3,16 @@ from controller.selector import Selector
 from controller.scheduler import Scheduler
 from optparse import OptionParser
 from recorder.recorder import Recorder
+import json
 import os
 import sys
 
-CLIENTS_FILE="./configs/client.json"
+CLIENTS_FILE="./configs/clients.json"
+AUTH_FILE="./configs/auth.json"
+
 class OpenStackVaccine:
-    def __init__(self, conf):
-        self.registrar = Registrar(conf)
+    def __init__(self, conf, auth_info):
+        self.registrar = Registrar(conf, auth_info)
         self.selector = Selector()
         self.scheduler = Scheduler(conf)
         self.recorder = Recorder()
@@ -30,8 +33,18 @@ if __name__ == "__main__":
                 client = client_json
 
         if client == None:
-            print "Client %s not found. Check clients.json file" % option.client
+            print "Client %s not found. Check clients.json file" % options.client
             sys.exit(-1)
-        
-        ovs = OpenStackVaccine(client)
+
+        # Getting auth info for the client
+        auth_file = open(AUTH_FILE)
+        auth_json = json.load(auth_file)
+
+        if client["name"] not in auth_json:
+            print "Auth Info not found in auth.json for client %s" % options.client
+            sys.exit(-1)
+
+        auth_info = auth_json[client["name"]]
+
+        ovs = OpenStackVaccine(client, auth_info)
 

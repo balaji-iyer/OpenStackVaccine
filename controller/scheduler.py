@@ -14,16 +14,25 @@ class Scheduler:
     """ Scheduler class.
         Schedules fault injections at specific time and frequency.
     """
-    def __init__(self, conf):
-        self.frequency = conf["frequency"]
-        self.start_time = conf["start_time"] or 9;
-        self.end_time = conf["end_time"] or 16
-        self.timezone = timezone(conf["timezone"]) or os.environ['TZ']
+    def __init__(self, debug=False):
+        self.frequency = 10
+        self.start_time = 9;
+        self.duration = 10
+        self.timezone = os.environ.get('TZ', None) or timezone("US/Eastern")
         self.last_scheduled = None
         self.shall_run = True
+        self.debug = debug
 
-    def start(self, osv):
-        import pdb;pdb.set_trace()
+    def start(self, osv, conf):
+        if "frequency" in conf:
+            self.frequency = conf["frequency"]
+        if "start_time" in conf:
+            self.start_time = conf["start_time"]
+        if "duration" in conf:
+            self.duration = conf["duration"]
+        if "timezone" in conf:
+            self.timezone = timezone(conf["timezone"])
+
         while(self.shall_run):
             if self.shall_schedule():
                 self.schedule(osv)
@@ -41,23 +50,35 @@ class Scheduler:
             If can apply menace, create menace.
         """
         client = osv.registrar.get_client()
-
+        selector = osv.selector
+        info = {}
         if client != None:
-            menace = osv.selector.select_menace()
+            menace = selector.select_menace(osv)
             if menace == None:
                 logging.error("Menace selection returned None. Check clients.json")
                 sys.exit(-1)
 
             process = None
-            if menace == Menace.KILL_PROCESS:
-                process = osv.selector.select_process(Menace.KILL_PROCESS)
+            if menace.needs_process():
+                process = selector.select_process(osv)
+                info["Process"] = process
 
-            instance = osv.selector.select_instance()
+            instance = selector.select_instance(osv)
+            info["Instance"] = "%s(%s)" % (instance.name, instance.id)
 
-            if client.can_apply_menace(menace):
-                client.create_menace(menace, instance, process)
+            volume = None
+            if menace.needs_volume():
+                volume = selector.select_volume(osv)
+                info["Volume"] = "%s(%s)" % (volume.name, volume.id)
+
+            if menace.can_apply():
+                applied = menace.apply(instance, process, volume)
+
+                if applied:
+                    logging.info("Menace %s applied: %s"
+                            % (menace.get_name(), " ".join(["%s: %s" %(key, pair) for key, pair in info.iteritems()])))
+
                 self.last_scheduled = datetime.now(tz=self.timezone)
-
 
     def stop(self):
         """ Set shall_run to False.
@@ -78,23 +99,22 @@ class Scheduler:
 
         day = date.today().weekday()
 
-        if day == SUNDAY or day == SATURDAY:
-            logging.info("%s today. Take some rest" % "SUNDAY" if day - SATURDAY else "SATURDAY")
+        if not self.debug and (day == SUNDAY or day == SATURDAY):
+            logging.info("%s today. Take some rest" % ("SUNDAY" if (day - SATURDAY) else "SATURDAY"))
             return False;
 
         hour = time.hour
 
-        if hour < self.start_time or hour > self.end_time:
+        if not self.debug and ( hour < self.start_time or hour > self.start_time + self.duration):
             logging.info("Post Office Hours. Go home. Get some life.")
             return False
 
         if self.last_scheduled != None:
 
             # office hours of the day / how many times to run = interval in hours * 3600
-            schedule_in_secs = float((self.end_time - self.start_time)) / self.frequency * 60 * 60
+            schedule_in_secs = float((self.duration)) / self.frequency * 60 * 60
             if self.last_scheduled + timedelta(seconds=schedule_in_secs) > time:
                 logging.info("Next Run in %s"
                         % (self.last_scheduled + timedelta(seconds=schedule_in_secs) - time))
                 return False
         return True
-

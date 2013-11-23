@@ -7,13 +7,10 @@
         "mobile": "+1 352 871 5169",
         "frequency": 10,
         "start_time": 10,
-        "end_time": 18,
+        "duration": 10,
         "timezone": "US/Eastern",
         "menaces": [
-            "stop-instance",
-            "kill-instance",
-            "fail-volume",
-            "kill-process"
+            "kill_instance"
         ],
         "processes": [
             "java",

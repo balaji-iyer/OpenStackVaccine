@@ -1,4 +1,4 @@
-class Client:
+class BaseClient:
     """ Abstract base class for clients.
         Defines interface that client may provide.
         Control class calls on these interfaces to create menace.

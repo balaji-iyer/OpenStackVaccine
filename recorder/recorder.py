@@ -6,8 +6,8 @@
 
 
 class Recorder:
-    def __init__(self):
-        pass
+    def __init__(self, debug):
+        self.debug = debug
 
     def record(self):
         pass

@@ -10,21 +10,26 @@ class Selector:
         If process or volume related, returns a random
         process or volume too respectively.
     """
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, debug=False):
+        self.debug = debug
 
-    def select_menace(self):
-        menaces = self.client.menaces
+
+    def select_menace(self, osv):
+        menaces = osv.registrar.get_menaces()
         if menaces == None or len(menaces) == 0:
             logging.error("Menace list missing. Check clients.json")
             sys.exit(-1)
-        menace = self._select_random(menaces)
-        logging.info("Selecting Menace: %s" % menace)
-        return menace
+        (menace_name, menace_cls) = self._select_random(menaces)
+        logging.info("Selecting Menace: %s" % menace_name)
+
+        # Instantiate class and return object
+        client = osv.registrar.get_client()
+        return menace_cls(menace_name, client)
 
 
-    def select_instance(self):
-        instances = self.client.list_instances()
+    def select_instance(self, osv):
+        client = osv.registrar.get_client()
+        instances = client.list_instances()
 
         if instances == None or len(instances) == 0:
             logging.error("No instance up right now. Nothing to do")
@@ -35,21 +40,19 @@ class Selector:
         logging.info("Selecting Instance: %s" % instance.id)
         return instance
 
-    def select_process(self, menace):
+    def select_process(self, osv):
+        client = osv.registrar.get_client()
 
-        if menace != Menace.KILL_PROCESS:
-            logging.error("Wrong menace type: %s" % menace)
-            sys.exit(-1)
-
-        processes = self.client.processes
+        processes = client.processes
         if processes == None or len(processes) == 0:
             logging.error("Process list missing. Check clients.json")
             sys.exit(-1)
 
         process = self._select_random(processes)
         logging.info("Selecting process: %s" % process)
+        return process
 
-    def select_volume(self, client, instance):
+    def select_volume(self, osv):
         pass
 
     def _select_random(self, list):

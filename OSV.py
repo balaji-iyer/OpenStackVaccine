@@ -55,10 +55,11 @@ if __name__ == "__main__":
     pprint.pprint(auth_info)
 
     osv = OpenStackVaccine(options.debug)
-    import pdb;pdb.set_trace()
 
     osv.registrar.register_owner(client)
     osv.registrar.register_client(client, auth_info)
     osv.registrar.register_menaces(client)
 
+
+    import pdb;pdb.set_trace()
     osv.scheduler.start(osv, client)

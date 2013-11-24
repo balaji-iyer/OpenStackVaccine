@@ -23,9 +23,9 @@ class Client(BaseClient):
             logging.warn("No servers present for client %s" % name)
             servers = []
 
-        pattern = re.compile("^" + os_auth_info["username"] + "-[0-9]{3}")
+        self.pattern = re.compile("^" + os_auth_info["username"] + "-[0-9]{3}")
         for inst in servers:
-            if not pattern.match(inst.name):
+            if not self.pattern.match(inst.name):
                 continue
             instance = Instance(inst)
             instanceId = instance.get_id()
@@ -59,13 +59,16 @@ class Client(BaseClient):
         self.id2inst.clear()
         instances = []
         for inst in insts:
+            if not self.pattern.match(inst.name):
+                continue
+
             instance = Instance(inst)
-            self.id2inst[instance.get_id()] = inst
+            self.id2inst[instance.get_id()] = instance
             instances.append(instance)
         return  instances
 
-    def list_volumes(self, instanceId):
-        return self.get_attached_volumes(instanceId, latest=True)
+    def list_volumes(self, instance):
+        return self.get_attached_volumes(instance.get_id(), latest=True)
 
     def kill_process(self):
         pass

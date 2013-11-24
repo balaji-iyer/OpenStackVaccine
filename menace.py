@@ -6,6 +6,9 @@ class Menace:
     def __init__(self, name, client):
         self.name = name
         self.client = client
+        self.process = None
+        self.instance = None
+        self.volume = None
 
     def can_apply(self):
         """ Decides whether or not this type of menace is applicable to client

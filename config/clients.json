@@ -10,7 +10,8 @@
         "duration": 10,
         "timezone": "US/Eastern",
         "menaces": [
-            "kill_instance"
+            "kill_instance",
+            "fail_volume"
         ],
         "processes": [
             "java",

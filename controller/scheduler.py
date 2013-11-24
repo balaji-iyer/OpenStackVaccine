@@ -61,18 +61,21 @@ class Scheduler:
             process = None
             if menace.needs_process():
                 process = selector.select_process(osv)
-                info["Process"] = process
-                menace.set_process(process)
+                if process != None:
+                    info["Process"] = process
+                    menace.set_process(process)
 
             instance = selector.select_instance(osv)
-            info["Instance"] = "%s(%s)" % (instance.get_name(), instance.get_id())
-            menace.set_instance(instance)
+            if instance != None:
+                info["Instance"] = "%s(%s)" % (instance.get_name(), instance.get_id())
+                menace.set_instance(instance)
 
-            volume = None
-            if menace.needs_volume():
-                volume = selector.select_volume(osv, instance)
-                info["Volume"] = "%s(%s)" % (volume.get_name(), volume.get_id())
-                menace.set_volume(volume)
+                volume = None
+                if menace.needs_volume():
+                    volume = selector.select_volume(osv, instance)
+                    if volume != None:
+                        info["Volume"] = "%s(%s)" % (volume.get_device(), volume.get_id())
+                        menace.set_volume(volume)
 
             if menace.can_apply():
                 applied = menace.apply()

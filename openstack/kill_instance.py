@@ -4,7 +4,7 @@ class KillInstance(Menace):
     """
 
     def can_apply(self):
-        return True
+        return self.instance != None
 
     def apply(self):
         status = True
@@ -22,13 +22,13 @@ class KillInstance(Menace):
 
 
 
-    
+
     def undo(self):
         assert self.instance != None
         status = True
         if self.client.is_owned_instance(self.instance):
             status = self.instance.get_status()
-            try: 
+            try:
                 if status == "SHUTOFF":
                     self.instance.start_instance()
                 elif status == "PAUSED":

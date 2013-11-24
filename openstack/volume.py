@@ -8,7 +8,7 @@ class Volume(BaseVolume):
         return self.volume.device
 
     def get_id(self):
-        return self.volume.VolumeId
+        return self.volume.volumeId
 
     def get_instance_id(self):
         return self.instance.get_id()

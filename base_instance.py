@@ -1,17 +1,16 @@
-"""
-    Abstract instance class.
-    To be subclassed by each clienttype eg. OpenstackInstance.
-    Defines basic functions used by menace class to create failure scenarios.
-"""
+class BaseInstance:
+    """ Abstract instance class.
+        To be subclassed by each clienttype eg. OpenstackInstance.
+        Defines basic functions used by menace class to create failure scenarios.
+    """
+    def __init__(self, server):
+        self.server = server
 
-class Instance:
-    def __init__(self, instance_id, floating_ip, fixed_ip, volumes, name):
-        self.id = instance_id
-        self.floating_ip = floating_ip
-        self.fixed_ip = fixed_ip
-        self.name = name
-        self.volumes = volumes
+    def get_name(self):
+        raise NotImplementedError
 
+    def get_id(self):
+        raise NotImplementedError
 
     def fail_volume(self):
         raise NotImplementedError

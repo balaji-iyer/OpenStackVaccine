@@ -32,3 +32,12 @@ class Menace:
 
     def get_name(self):
         return self.name
+
+    def set_process(self, process):
+        self.process = process
+
+    def set_instance(self, instance):
+        self.instance = instance
+
+    def set_volume(self, volume):
+        self.volume = volume

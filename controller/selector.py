@@ -37,7 +37,7 @@ class Selector:
             return None
 
         instance = self._select_random(instances)
-        logging.info("Selecting Instance: %s" % instance.id)
+        #logging.info("Selecting Instance: %s" % instance)
         return instance
 
     def select_process(self, osv):
@@ -52,8 +52,19 @@ class Selector:
         logging.info("Selecting process: %s" % process)
         return process
 
-    def select_volume(self, osv):
-        pass
+    def select_volume(self, osv, instance):
+        client = osv.registrar.get_client()
+        volumes = client.list_volumes(instance)
+
+        if volumes == None or len(volumes) == 0:
+            logging.error("No volumes attached right now. Nothing to do")
+            # Donot kill, volume might be attached later.
+            return None
+
+        volume = self._select_random(volumes)
+        #logging.info("Selecting volume: %s" % volume.get_name())
+        return volume
+
 
     def _select_random(self, list):
         index = int(random.uniform(0, len(list)))

@@ -3,11 +3,13 @@ class BaseClient:
         Defines interface that client may provide.
         Control class calls on these interfaces to create menace.
     """
-    def __init__(self, menaces, processes):
+    def __init__(self, menaces, processes, name):
         self.menaces = menaces
         self.processes = processes
         self.process2inst = {}
         self.id2inst = {}
+        self.id2vols = {}
+        self.name = name
 
 
     def kill_instance(self, instaceId):
@@ -19,7 +21,7 @@ class BaseClient:
     def list_instances(self):
         raise NotImplementedError
 
-    def list_volumes(self, instanceId):
+    def list_volumes(self, instance):
         raise NotImplementedError
 
     def kill_process(self, instanceId, processId):

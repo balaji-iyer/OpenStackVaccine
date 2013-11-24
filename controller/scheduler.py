@@ -62,17 +62,20 @@ class Scheduler:
             if menace.needs_process():
                 process = selector.select_process(osv)
                 info["Process"] = process
+                menace.set_process(process)
 
             instance = selector.select_instance(osv)
-            info["Instance"] = "%s(%s)" % (instance.name, instance.id)
+            info["Instance"] = "%s(%s)" % (instance.get_name(), instance.get_id())
+            menace.set_instance(instance)
 
             volume = None
             if menace.needs_volume():
-                volume = selector.select_volume(osv)
-                info["Volume"] = "%s(%s)" % (volume.name, volume.id)
+                volume = selector.select_volume(osv, instance)
+                info["Volume"] = "%s(%s)" % (volume.get_name(), volume.get_id())
+                menace.set_volume(volume)
 
             if menace.can_apply():
-                applied = menace.apply(instance, process, volume)
+                applied = menace.apply()
 
                 if applied:
                     logging.info("Menace %s applied: %s"

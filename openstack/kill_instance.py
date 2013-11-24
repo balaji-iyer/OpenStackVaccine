@@ -1,18 +1,21 @@
 from menace import Menace
-
 class KillInstance(Menace):
+    """ Openstack kill instance menace implementation.
+    """
 
     def can_apply(self):
         return True
 
-    def apply(self, instance, process, volume):
+    def apply(self):
         status = True
-        if self.client.is_owned_instance(instance):
+        assert self.instance != None
+        if self.client.is_owned_instance(self.instance):
+
             try:
-                self.client.stop_instance(instance)
+                self.instance.stop_instance()
             except:
                 try :
-                    self.client.pause_instance(instance)
+                    self.instance.pause_instance()
                 except:
                     status = False
         return status
@@ -20,14 +23,16 @@ class KillInstance(Menace):
 
 
     
-    def undo(self, instance, process, volume):
+    def undo(self):
+        assert self.instance != None
         status = True
-        if self.client.is_owned_instance(instance):
+        if self.client.is_owned_instance(self.instance):
+            status = self.instance.get_status()
             try: 
-                if instance.status == "SHUTOFF":
-                    self.client.start_instance()
-                elif instance.status == "PAUSED":
-                    self.client.resume_instance()
+                if status == "SHUTOFF":
+                    self.instance.start_instance()
+                elif status == "PAUSED":
+                    self.instance.resume_instance()
             except:
                 status = False
         return status

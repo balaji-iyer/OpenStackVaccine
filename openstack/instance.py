@@ -1,8 +1,13 @@
 from base_instance import BaseInstance
+import paramiko
+import logging
+import sys
+import os
 
 class Instance(BaseInstance):
-    def __init__(self, server):
-        BaseInstance.__init__(self, server)
+    def __init__(self, client, server, ssh_info=None):
+        BaseInstance.__init__(self, client, server, ssh_info)
+
 
     def get_name(self):
         return self.server.name
@@ -37,3 +42,49 @@ class Instance(BaseInstance):
     def get_status(self):
         return self.server.status
 
+    def _copy_script(self, script_name):
+        client_script_path = os.path.join(os.getcwd(), "openstack", "scripts", "%s.sh" % script_name)
+        server_script_path = os.path.join(self.server_dir, "%s.sh" % script_name)
+        try:
+            self.sftp.put(client_script_path, server_script_path)
+        except:
+            logging.error("SCP to server failed: %s" % script_name)
+            sys.exit(-1)
+        return server_script_path
+
+    def _exec_script(self, script_name):
+
+        # Init connection if not up already
+        self.init_connection()
+
+        # Copy the script from this machine to target machine.
+        server_script_path = self._copy_script(script_name)
+
+        # Execute the new script
+        try:
+            ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command("/bin/bash %s" % server_script_path)
+        except:
+            logging.error("Script execution %s on server %s(%s) failed" % (server_script_path, self.get_name(), self.get_id()))
+            sys.exit(1)
+
+
+    def kill_process(self, process):
+        assert process in self.client.get_registered_processes()
+        self._exec_script("kill_process")
+
+
+    def get_hostname(self):
+        if not self.hostname:
+            # Get user Ip/Hostname
+            assert self.server != None
+            addrs  = self.server.addresses
+            p_addrs = addrs.get("private", None)
+            if p_addrs == None or len(p_addrs) == 0:
+                logging.error("No public address attached to server %s(%s)" % (self.get_name(), self.get_id()))
+                sys.exit(-1)
+
+            for addr in p_addrs:
+                if addr.get("OS-EXT-IPS:type", None) == "floating":
+                    self.hostname = addr["addr"]
+                    break
+        return self.hostname

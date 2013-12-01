@@ -36,7 +36,7 @@ class Scheduler:
         while(self.shall_run):
             if self.shall_schedule():
                 self.schedule(osv)
-            time.sleep(60)
+            time.sleep(20)
 
 
     def schedule(self, osv):
@@ -83,6 +83,8 @@ class Scheduler:
                 if applied:
                     logging.info("Menace %s applied: %s"
                             % (menace.get_name(), " ".join(["%s: %s" %(key, pair) for key, pair in info.iteritems()])))
+                    time.sleep(20)
+                    menace.undo()
 
                 self.last_scheduled = datetime.now(tz=self.timezone)
 
@@ -101,6 +103,7 @@ class Scheduler:
             See if office hours,
             See if recently applied
         """
+
         time = datetime.now(tz=self.timezone)
 
         day = date.today().weekday()

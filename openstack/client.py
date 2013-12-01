@@ -8,8 +8,8 @@ import logging
 import re
 
 class Client(BaseClient):
-    def __init__(self, menaces, processes, name, os_auth_info):
-        BaseClient.__init__(self, menaces, processes, name)
+    def __init__(self, name, conf, os_auth_info):
+        BaseClient.__init__(self, name, conf, os_auth_info)
         self.handle = client.Client(
                            os_auth_info["username"],
                            os_auth_info["password"],
@@ -17,30 +17,36 @@ class Client(BaseClient):
                            os_auth_info["auth_url"],
                            insecure=True,
                            service_type="compute")
+
+        # Maybe the client doesn't prefer ssh route
+        self.ssh_info = conf.get("ssh", None)
+
+        servers = []
         try:
-            servers = self.handle.servers.list()
+            servers.extend(self.handle.servers.list())
         except NotFound:
             logging.warn("No servers present for client %s" % name)
-            servers = []
 
         self.pattern = re.compile("^" + os_auth_info["username"] + "-[0-9]{3}")
         for inst in servers:
             if not self.pattern.match(inst.name):
                 continue
-            instance = Instance(inst)
+            instance = Instance(self, inst, self.ssh_info)
             instanceId = instance.get_id()
+
             self.id2inst[instanceId] = instance
 
+            vols = []
             try:
-                vols = self.handle.volumes.get_server_volumes(instanceId)
+                vols.extend(self.handle.volumes.get_server_volumes(instanceId))
             except NotFound:
                 logging.warn("No volume attached for instance %s(%s)" % (instance.get_name(), instance.get_id()))
-                vols = []
 
-            volumes = []
+            volumes = self.id2vols[instanceId] = []
             for vol in vols:
                 volumes.append(Volume(instance, vol))
-            self.id2vols[instanceId] = volumes
+
+
 
     def is_owned_instance(self, instance):
         return instance.get_id() in self.id2inst
@@ -62,16 +68,13 @@ class Client(BaseClient):
             if not self.pattern.match(inst.name):
                 continue
 
-            instance = Instance(inst)
+            instance = Instance(self, inst, self.ssh_info)
             self.id2inst[instance.get_id()] = instance
             instances.append(instance)
         return  instances
 
     def list_volumes(self, instance):
         return self.get_attached_volumes(instance.get_id(), latest=True)
-
-    def kill_process(self):
-        pass
 
     def get_instance(self, instanceId, latest=False):
         assert instanceId != None
@@ -126,5 +129,4 @@ class Client(BaseClient):
 
     def can_apply_menace(self, menace):
         return menace in self.menaces
-
 

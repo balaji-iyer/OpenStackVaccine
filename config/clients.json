@@ -7,15 +7,19 @@
         "mobile": "+1 352 871 5169",
         "frequency": 10,
         "start_time": 10,
-        "duration": 10,
+        "duration": 1,
         "timezone": "US/Eastern",
         "menaces": [
-            "kill_instance",
-            "fail_volume"
+            "kill_process"
         ],
         "processes": [
-            "java",
             "python"
-            ]
+            ],
+        "ssh": {
+            "key_file": "/home/kushal/.ssh/karora-key",
+            "username": "ubuntu",
+            "port": 22,
+            "server_dir": "/tmp"
+        }
     }
 ]

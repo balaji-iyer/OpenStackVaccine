@@ -46,7 +46,7 @@ class Registrar:
             sys.exit(-1)
 
         logging.info("Registering client from %s module" % self.client_dir.replace("/","."))
-        self.client = client.Client(conf["menaces"], conf["processes"], self.name, auth_info)
+        self.client = client.Client(self.name, conf, auth_info)
 
     def register_menaces(self, conf):
         assert "menaces" in conf, \

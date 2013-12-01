@@ -20,3 +20,13 @@ class FloodNetwork(Menace):
             logging.error("Executing menace %s failed" % "flood_network")
 
         return status
+
+    def undo(self):
+        assert self.instance != None
+        status = False
+        try:
+            status = self.instance.exec_script("restore_network")
+        except:
+            logging.error("Undoing menace %s failed" % "flood_network")
+
+        return status

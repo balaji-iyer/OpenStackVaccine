@@ -10,10 +10,17 @@
         "duration": 1,
         "timezone": "US/Eastern",
         "menaces": [
-            "kill_process"
+            "kill_instance",
+            "kill_process",
+            "fail_volume",
+            "fail_dns",
+            "fail_network",
+            "flood_network",
+            "crash_cpu"
         ],
         "processes": [
-            "python"
+            "python",
+            "java"
             ],
         "ssh": {
             "key_file": "/home/kushal/.ssh/karora-key",

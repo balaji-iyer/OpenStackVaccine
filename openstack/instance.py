@@ -52,7 +52,7 @@ class Instance(BaseInstance):
             sys.exit(-1)
         return server_script_path
 
-    def _exec_script(self, script_name):
+    def exec_script(self, script_name):
 
         # Init connection if not up already
         self.init_connection()
@@ -61,16 +61,16 @@ class Instance(BaseInstance):
         server_script_path = self._copy_script(script_name)
 
         # Execute the new script
+        ssh_stdin = None
+        ssh_stdout = None
+        ssh_stderr = None
         try:
             ssh_stdin, ssh_stdout, ssh_stderr = self.ssh.exec_command("/bin/bash %s" % server_script_path)
         except:
             logging.error("Script execution %s on server %s(%s) failed" % (server_script_path, self.get_name(), self.get_id()))
             sys.exit(1)
+        return not ssh_stderr
 
-
-    def kill_process(self, process):
-        assert process in self.client.get_registered_processes()
-        self._exec_script("kill_process")
 
 
     def get_hostname(self):

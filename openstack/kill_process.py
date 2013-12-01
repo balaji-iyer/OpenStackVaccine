@@ -21,8 +21,19 @@ class KillProcess(Menace):
         assert self.instance != None
         assert self.process != None
         try:
-            status = self.instance.kill_process(self.process)
+            status = self.kill_process(self.process)
         except:
             logging.error("Failed to kill process %s on instance %s(%s)" % (self.process, self.instance.get_name(), self.instance.get_id()))
             status = False
         return status
+
+    def kill_process(self, process):
+        assert process in self.client.get_registered_processes()
+        status = False
+        try:
+            status = self.instance.exec_script("kill_process")
+        except:
+            logging.error("Executing menace %s failed" % "kill_process")
+        return status
+
+

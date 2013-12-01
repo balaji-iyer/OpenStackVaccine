@@ -1,5 +1,4 @@
 #!/bin/bash
-# Script for KillProcesses Chaos Monkey
 
 cat << EOF > /tmp/kill_loop.sh
 #!/bin/bash

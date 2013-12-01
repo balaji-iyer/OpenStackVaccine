@@ -1,6 +1,6 @@
 from menace import Menace
 import logging
-class CrashCPU(Menace):
+class CrashCpu(Menace):
     """ Openstack implementation of Crash CPU
         Runs 32 threads on heavy task to burn out cpu.
     """
@@ -15,6 +15,16 @@ class CrashCPU(Menace):
         status = False
         try:
             status = self.instance.exec_script("crash_cpu")
+        except:
+            logging.error("Executing menace %s failed" % "crash_cpu")
+
+        return status
+
+    def undo(self):
+        assert self.instance != None
+        status = False
+        try:
+            status = self.instance.exec_script("crash_cpu_undo")
         except:
             logging.error("Executing menace %s failed" % "crash_cpu")
 

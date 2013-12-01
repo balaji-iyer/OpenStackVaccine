@@ -1,32 +1,38 @@
 [
     {
         "name": "openstack",
-        "owner": "OpenstackVaccine",
         "dir": "openstack",
-        "email": "kushal18@gmail.com",
-        "mobile": "+1 352 871 5169",
-        "frequency": 10,
-        "start_time": 10,
-        "duration": 1,
-        "timezone": "US/Eastern",
-        "menaces": [
-            "kill_instance",
-            "kill_process",
-            "fail_volume",
-            "fail_dns",
-            "fail_network",
-            "flood_network",
-            "crash_cpu"
-        ],
-        "processes": [
-            "python",
-            "java"
+        "owner": {
+            "name": "OpenstackVaccine",
+            "email": "kushal18@gmail.com",
+            "mobile": "+1 352 871 5169"
+        },
+        "schedule": {
+            "frequency": 10,
+            "start_time": 10,
+            "duration": 1,
+            "timezone": "US/Eastern"
+        },
+        "client": {
+            "menaces": [
+                "kill_instance",
+                "kill_process",
+                "fail_volume",
+                "fail_dns",
+                "fail_network",
+                "flood_network",
+                "crash_cpu"
             ],
-        "ssh": {
-            "key_file": "/home/kushal/.ssh/karora-key",
-            "username": "ubuntu",
-            "port": 22,
-            "server_dir": "/tmp"
+            "processes": [
+                "python",
+                "java"
+                ],
+            "ssh": {
+                "key_file": "/home/kushal/.ssh/karora-key",
+                "username": "ubuntu",
+                "port": 22,
+                "server_dir": "/tmp"
+            }
         }
     }
 ]

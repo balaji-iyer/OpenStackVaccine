@@ -1,7 +1,7 @@
 from menace import Menace
 import logging
 
-class FailDNS(Menace):
+class FailDns(Menace):
     """ Openstack implementation of Fail DNS.
         Changes iptables rule to drop tcp and udp packets on port 53.
     """

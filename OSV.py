@@ -28,17 +28,17 @@ if __name__ == "__main__":
     (options, args) = parser.parse_args()
 
     logging.info("Running OpenStackVaccine for client %s" % options.client)
-    client_file = open(os.path.abspath(CLIENTS_FILE))
-    clients_json = json.load(client_file)
+    conf_file = open(os.path.abspath(CLIENTS_FILE))
+    clients_json = json.load(conf_file)
 
-    client = None
+    conf = None
 
     for client_json in clients_json:
         if options.client == client_json["name"]:
-            client = client_json
-            logging.info("Client Info:%s", json.dumps(client, sort_keys=True, indent=4))
+            conf = client_json
+            logging.info("Client Info:%s", json.dumps(conf, sort_keys=True, indent=4))
 
-    if client == None:
+    if conf == None:
         logging.error("Client %s not found. Check clients.json file" % options.client)
         sys.exit(-1)
 
@@ -46,20 +46,19 @@ if __name__ == "__main__":
     auth_file = open(os.path.abspath(AUTH_FILE))
     auth_json = json.load(auth_file)
 
-    if client["name"] not in auth_json:
+    if conf["name"] not in auth_json:
         logging.error("Auth Info not found in auth.json for client %s" % options.client)
         sys.exit(-1)
 
-    auth_info = auth_json.get(client["name"])
+    auth_info = auth_json.get(conf["name"])
     logging.info("Auth Info:%s" % json.dumps(auth_info, sort_keys=True, indent=4))
     pprint.pprint(auth_info)
 
     osv = OpenStackVaccine(options.debug)
 
-    osv.registrar.register_owner(client)
-    import pdb;pdb.set_trace()
-    osv.registrar.register_client(client, auth_info)
-    osv.registrar.register_menaces(client)
+    osv.registrar.register_owner(conf["owner"])
+    osv.registrar.register_client(conf["name"], conf["dir"], conf["client"], auth_info)
+    osv.registrar.register_menaces(conf["dir"], conf["client"])
 
 
-    osv.scheduler.start(osv, client)
+    osv.scheduler.start(osv, conf.get("schedule", {}))

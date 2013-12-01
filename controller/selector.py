@@ -37,7 +37,7 @@ class Selector:
             return None
 
         instance = self._select_random(instances)
-        #logging.info("Selecting Instance: %s" % instance)
+        logging.info("Selecting Instance: %s(%s)" % (instance.get_name(), instance.get_id()))
         return instance
 
     def select_process(self, osv):
@@ -62,7 +62,7 @@ class Selector:
             return None
 
         volume = self._select_random(volumes)
-        #logging.info("Selecting volume: %s" % volume.get_name())
+        logging.info("Selecting volume: %s" % volume.get_name())
         return volume
 
 

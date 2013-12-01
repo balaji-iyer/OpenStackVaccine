@@ -18,6 +18,7 @@ class Scheduler:
         self.frequency = 10
         self.start_time = 9;
         self.duration = 10
+        self.applied_duration = 60
         self.timezone = os.environ.get('TZ', None) or timezone("US/Eastern")
         self.last_scheduled = None
         self.shall_run = True
@@ -32,6 +33,8 @@ class Scheduler:
             self.duration = conf["duration"]
         if "timezone" in conf:
             self.timezone = timezone(conf["timezone"])
+        if "applied_duration" in conf:
+            self.timezone = conf["applied_duration"]
 
         while(self.shall_run):
             if self.shall_schedule():
@@ -82,9 +85,18 @@ class Scheduler:
 
                 if applied:
                     logging.info("Menace %s applied: %s"
-                            % (menace.get_name(), " ".join(["%s: %s" %(key, pair) for key, pair in info.iteritems()])))
-                    time.sleep(20)
-                    menace.undo()
+                            % (menace.get_name(),
+                                " ".join(["%s: %s" %(key, pair) for key, pair in info.iteritems()])))
+
+                    # Undo Menace after applied_duration
+                    time.sleep(self.applied_duration)
+
+                    applied = menace.undo()
+
+                    if applied:
+                        logging.info("Undid Menace %s : %s"
+                                % (menace.get_name(),
+                                    " ".join(["%s: %s" %(key, pair) for key, pair in info.iteritems()])))
 
                 self.last_scheduled = datetime.now(tz=self.timezone)
 

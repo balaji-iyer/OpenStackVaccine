@@ -11,6 +11,7 @@
             "frequency": 10,
             "start_time": 10,
             "duration": 1,
+            "apply_duration": 60,
             "timezone": "US/Eastern"
         },
         "client": {

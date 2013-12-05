@@ -13,11 +13,12 @@ class FloodNetwork(Menace):
 
     def apply(self):
         assert self.instance != None
-        status = False
+        status = True
         try:
-            status = self.instance.exec_script("flood_network")
+            self.instance.exec_script("flood_network")
         except:
             logging.error("Executing menace %s failed" % "flood_network")
+            status = False
 
         return status
 

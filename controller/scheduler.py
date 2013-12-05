@@ -83,6 +83,7 @@ class Scheduler:
             if menace.can_apply():
                 applied = menace.apply()
 
+                import pdb; pdb.set_trace()
                 if applied:
                     logging.info("Menace %s applied: %s"
                             % (menace.get_name(),
@@ -90,7 +91,6 @@ class Scheduler:
 
                     # Undo Menace after applied_duration
                     time.sleep(self.applied_duration)
-
                     applied = menace.undo()
 
                     if applied:

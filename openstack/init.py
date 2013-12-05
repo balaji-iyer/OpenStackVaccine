@@ -9,6 +9,7 @@ from optparse import OptionParser
 import os
 import cinderclient.v1
 import json
+import logging
 import novaclient.v1_1
 import paramiko
 import time
@@ -37,13 +38,13 @@ class OS_Instance:
 
     def boot_instance(self, count):
         instances = []
-        for i in xrange(count):
+        for i in range(1, count + 1):
             instance = None
             floating_ip = None
             volume = None
             instance_found = False
             for server in self.novaclient.servers.list():
-                if "%s-%s" % (self.username, i) == server.name:
+                if "%s-%03d" % (self.username, i) == server.name:
                     instance_found = True
                     instance = server
                     break;
@@ -53,7 +54,7 @@ class OS_Instance:
                     raise Exception
                 imL = [x for x in self.novaclient.images.list() if x.name.find("ubuntu") > -1]
                 if len(imL) > 0:
-                    instance = self.novaclient.servers.create("%s-%s" %(self.username, i), imL[0], flavor=flavor)
+                    instance = self.novaclient.servers.create("%s-%03d" %(self.username, i), imL[0], flavor=flavor)
 
                 status = instance.status
                 #Poll at 5 second interval, until status is no longer build
@@ -63,6 +64,7 @@ class OS_Instance:
                     status = instance.status
             if not instance:
                 raise Exception
+            logging.info("Booting Instance %s" % instance)
             instances.append(instance)
         return instances
 
@@ -76,6 +78,7 @@ class OS_Instance:
 
         for floating_ip in floating_ip_list:
             if floating_ip.instance_id == instance.id:
+                logging.info("Instance %s: Attaching Floating Ip %s" % (instance, floating_ip))
                 return floating_ip
 
         # Else return any vacant floating ip
@@ -91,7 +94,8 @@ class OS_Instance:
             floating_ip = self.novaclient.floating_ips.create()
 
         instance.add_floating_ip(floating_ip)
-
+        time.sleep(5)
+        logging.info("Instance %s: Attaching Floating Ip %s" % (instance, floating_ip))
         return floating_ip
 
     def attach_volume(self, instance, size, disp_name, device_name, discription=None):
@@ -99,17 +103,17 @@ class OS_Instance:
         assert size != None and size > 0
         assert disp_name != None
 
-        attached_volumes = self.novaclient.volumes.get_server_volumes(instance.id)
-
+        volumes = self.cinderclient.volumes.list()
         # If already volume with same device name attached
         # Just return that volume.
-        if len(attached_volumes) > 0:
-            for volume in attached_volumes:
-                if volume.device == device_name:
+        for volume in volumes:
+            attached_inst = volume.attachments
+            for inst in attached_inst:
+                if inst["server_id"] == instance.id:
+                    logging.info("Instance %s: Attaching Volume %s" % (instance, volume))
                     return volume
 
         volume = None
-        volumes = self.cinderclient.volumes.list()
         for vol in volumes:
             if len(vol.attachments) == 0:
                 volume = vol
@@ -118,6 +122,14 @@ class OS_Instance:
         # Else create a volume.
         if not volume:
             volume = self.cinderclient.volumes.create(size, display_name = disp_name)
+            logging.info("Instance %s: Creating Volume %s" % (instance, volume))
+            status = volume.status
+            #Poll at 5 second interval, until status is no longer build
+            while status != 'available':
+                logging.info("Instance %s: Waiting 5 sec for Volume %s" % (instance, volume))
+                time.sleep(5)
+                instance = self.cinderclient.volumes.get(volume.id)
+                status = volume.status
 
         assert volume != None, "Failed to get volume"
 
@@ -125,15 +137,21 @@ class OS_Instance:
                 volume,
                 instance.id,
                 device_name)
+        logging.info("Instance %s: Attaching Volume %s" % (instance, volume))
         return volume
 
 
 if __name__ == "__main__":
-    os_client = OS_Instance()
+    parser = OptionParser()
+    logging.basicConfig(level=logging.INFO)
+    parser.add_option("-c", "--count", dest="count", type="int", default=1)
+    (options, args) = parser.parse_args()
+
     import pdb;pdb.set_trace()
-    os_instances = os_client.boot_instance(1)
+    os_client = OS_Instance()
     instances = []
 
+    os_instances = os_client.boot_instance(options.count)
     conf_file = open(os.path.abspath(CLIENTS_FILE))
     clients_json = json.load(conf_file)
 
@@ -153,6 +171,5 @@ if __name__ == "__main__":
 
         instance = Instance(os_instance, ssh_info)
         i += 1;
-        #instance.exec_script("inf_py")
-        #instance.exec_script("java_py")
+        instance.exec_script("inf_py")
 

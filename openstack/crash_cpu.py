@@ -12,11 +12,12 @@ class CrashCpu(Menace):
 
     def apply(self):
         assert self.instance != None
-        status = False
+        status = True
         try:
-            status = self.instance.exec_script("crash_cpu")
+            self.instance.exec_script("crash_cpu")
         except:
             logging.error("Executing menace %s failed" % "crash_cpu")
+            status = False
 
         return status
 

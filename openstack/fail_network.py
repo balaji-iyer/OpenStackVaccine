@@ -13,12 +13,12 @@ class FailNetwork(Menace):
 
     def apply(self):
         assert self.instance != None
-        status = False
+        status = True
         try:
-            status = self.instance.exec_script("fail_network")
+            self.instance.exec_script("fail_network")
         except:
             logging.error("Executing menace %s failed" % "fail_network")
-
+            status = False
         return status
 
     def undo(self):

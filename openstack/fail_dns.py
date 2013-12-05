@@ -13,10 +13,11 @@ class FailDns(Menace):
 
     def apply(self):
         assert self.instance != None
-        status = False
+        status = True
         try:
-            status = self.instance.exec_script("fail_dns")
+            self.instance.exec_script("fail_dns")
         except:
+            status = False
             logging.error("Executing menace %s failed" % "fail_dns")
 
         return status

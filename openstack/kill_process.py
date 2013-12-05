@@ -29,11 +29,12 @@ class KillProcess(Menace):
 
     def kill_process(self, process):
         assert process in self.client.get_registered_processes()
-        status = False
+        status = True
         try:
-            status = self.instance.exec_script("kill_process")
+            self.instance.exec_script("kill_process")
         except:
             logging.error("Executing menace %s failed" % "kill_process")
+            status = False
         return status
 
 

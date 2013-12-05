@@ -5,8 +5,8 @@ import sys
 import os
 
 class Instance(BaseInstance):
-    def __init__(self, client, server, ssh_info=None):
-        BaseInstance.__init__(self, client, server, ssh_info)
+    def __init__(self, server, ssh_info=None):
+        BaseInstance.__init__(self, server, ssh_info)
 
 
     def get_name(self):

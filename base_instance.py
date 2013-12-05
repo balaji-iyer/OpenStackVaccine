@@ -5,8 +5,7 @@ class BaseInstance:
         To be subclassed by each clienttype eg. OpenstackInstance.
         Defines basic functions used by menace class to create failure scenarios.
     """
-    def __init__(self, client, server, ssh_info=None):
-        self.client = client
+    def __init__(self, server, ssh_info=None):
         self.server = server
         self.ssh_info = ssh_info
         self.ssh = None

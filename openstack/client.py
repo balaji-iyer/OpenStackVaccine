@@ -31,7 +31,7 @@ class Client(BaseClient):
         for inst in servers:
             if not self.pattern.match(inst.name):
                 continue
-            instance = Instance(self, inst, self.ssh_info)
+            instance = Instance(inst, self.ssh_info)
             instanceId = instance.get_id()
 
             self.id2inst[instanceId] = instance
@@ -68,7 +68,7 @@ class Client(BaseClient):
             if not self.pattern.match(inst.name):
                 continue
 
-            instance = Instance(self, inst, self.ssh_info)
+            instance = Instance(inst, self.ssh_info)
             self.id2inst[instance.get_id()] = instance
             instances.append(instance)
         return  instances

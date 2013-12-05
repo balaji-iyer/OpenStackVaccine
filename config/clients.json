@@ -8,7 +8,7 @@
             "mobile": "+1 352 871 5169"
         },
         "schedule": {
-            "frequency": 10,
+            "frequency": 100,
             "start_time": 10,
             "duration": 1,
             "apply_duration": 60,
@@ -19,14 +19,10 @@
                 "kill_instance",
                 "kill_process",
                 "fail_volume",
-                "fail_dns",
-                "fail_network",
-                "flood_network",
                 "crash_cpu"
             ],
             "processes": [
-                "python",
-                "java"
+                "python"
                 ],
             "ssh": {
                 "key_file": "/home/kushal/.ssh/karora-key",

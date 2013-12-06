@@ -11,7 +11,7 @@
             "frequency": 100,
             "start_time": 10,
             "duration": 1,
-            "apply_duration": 60,
+            "apply_duration": 10,
             "timezone": "US/Eastern"
         },
         "client": {
@@ -19,6 +19,9 @@
                 "kill_instance",
                 "kill_process",
                 "fail_volume",
+                "flood_network",
+                "fail_network",
+                "fail_dns",
                 "crash_cpu"
             ],
             "processes": [

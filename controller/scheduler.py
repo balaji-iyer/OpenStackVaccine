@@ -83,7 +83,6 @@ class Scheduler:
             if menace.can_apply():
                 applied = menace.apply()
 
-                import pdb; pdb.set_trace()
                 if applied:
                     logging.info("Menace %s applied: %s"
                             % (menace.get_name(),

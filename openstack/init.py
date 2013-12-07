@@ -1,7 +1,7 @@
-"""
-Script accomplishes the following tasks.
-    1. Init environment on seirra.futuregrid.org
-    2.
+""" Script accomplishes the following tasks.
+    1. Init Servers
+    2. Give a floating ip
+    3. Attach a volume at /dev/vdb
 """
 from OSV import CLIENTS_FILE
 from openstack.instance import Instance
@@ -103,17 +103,14 @@ class OS_Instance:
         assert size != None and size > 0
         assert disp_name != None
 
-        volumes = self.cinderclient.volumes.list()
-        # If already volume with same device name attached
-        # Just return that volume.
-        for volume in volumes:
-            attached_inst = volume.attachments
-            for inst in attached_inst:
-                if inst["server_id"] == instance.id:
-                    logging.info("Instance %s: Attaching Volume %s" % (instance, volume))
+        volumes = self.novaclient.volumes.get_server_volumes(instance.id)
+        if len(volumes) > 0:
+            for volume in volumes:
+                if volume.device == device_name:
                     return volume
 
         volume = None
+        volumes = self.cinderclient.volumes.list()
         for vol in volumes:
             if len(vol.attachments) == 0:
                 volume = vol
@@ -133,10 +130,13 @@ class OS_Instance:
 
         assert volume != None, "Failed to get volume"
 
-        self.cinderclient.volumes.attach(
-                volume,
-                instance.id,
-                device_name)
+        vol = self.novaclient.volumes.create_server_volume(
+                server_id=instance.id,
+                volume_id=volume.id,
+                device=device_name)
+
+        assert vol.device == device_name
+        assert vol.id == volume.id
         logging.info("Instance %s: Attaching Volume %s" % (instance, volume))
         return volume
 

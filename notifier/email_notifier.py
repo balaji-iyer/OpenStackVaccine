@@ -48,7 +48,7 @@ class EmailNotifier(Notifier):
                           self.owner_phone if self.owner_phone else "NA")
 
         message = MIMEText(body, 'plain', 'utf-8')
-        message["Subject"] = "Subject: Menace %s Created On %s" % ( menace, instance)
+        message["Subject"] = "Menace %s Created On %s" % ( menace, instance)
         message["From"] = self.frm
         message["To"] = self.owner_email
         s = smtplib.SMTP(self.smtp)

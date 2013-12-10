@@ -57,7 +57,6 @@ Some of the configs that needs to defined in configs/clients.json are:
         },
 
 ```
-
     If you donot want email notification, leave notifier dict empty
 
 ```

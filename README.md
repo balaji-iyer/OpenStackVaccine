@@ -21,3 +21,10 @@ Following failure scenarios are replicated:
 
 
 As a user of Openstack Implementation all you need to do is define config/clients.json and config/auth.json. Example jsons are present in config directory which can be directly modified.
+
+
+To run the Openstack module from Openstack directory, run
+
+```
+    $ python OSV.py -c openstack
+```

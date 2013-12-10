@@ -4,8 +4,17 @@
         "dir": "openstack",
         "owner": {
             "name": "OpenstackVaccine",
-            "email": "kushal18@gmail.com",
-            "mobile": "+1 352 871 5169"
+            "email": "owner@example.com",
+            "phone": "+1 XXX-XXX-XXXX"
+        },
+        "notifier": {
+            "email": {
+                "name": "OpenstackVaccine",
+                "from": "owner@example.com",
+                "smtp": "smtp.example.com:587",
+                "username": "johndoe",
+                "password": "XXXXXXX"
+            }
         },
         "schedule": {
             "frequency": 100,
@@ -28,7 +37,7 @@
                 "python"
                 ],
             "ssh": {
-                "key_file": "/home/kushal/.ssh/karora-key",
+                "key_file": "/home/johndoe/.ssh/openstack-key",
                 "username": "ubuntu",
                 "port": 22,
                 "server_dir": "/tmp"

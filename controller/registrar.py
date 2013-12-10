@@ -8,11 +8,13 @@ class Registrar:
         Stores them in a key-value store.
     """
 
+    NOTIFIER_DIR = "notifier"
     def __init__(self, debug):
 
         self.client = None
         self.owner = None
         self.menaces = []
+        self.notifiers = []
         self.name = None
         self.client_dir = None
         self.debug = debug
@@ -59,7 +61,7 @@ class Registrar:
 
         menaces = conf.get("menaces", [])
 
-        if menaces != None:
+        if len(menaces) > 0:
             for menace in menaces:
                 try:
                     module = importlib.import_module(".%s" % menace,
@@ -82,6 +84,33 @@ class Registrar:
 
                 self.menaces.append((menace, menace_cls))
 
+
+    def register_notifier(self, client, notifiers, owner):
+        """ Registers medium by which owner has to be notified.
+            Newer mediums can be added to notifier package.
+        """
+        import pdb;pdb.set_trace()
+        if len(notifiers) > 0:
+            for notifier, info in notifiers.iteritems():
+                module_name = "%s_notifier" % notifier
+                try:
+                    module = importlib.import_module(".%s" % module_name, Registrar.NOTIFIER_DIR.replace("/", "."))
+                except ImportError:
+                    logging.error("Failed to load notifier %s. Please check config file" % notifier)
+                    sys.exit(-1)
+
+                notifier_cls_name = module_name.title().replace("_", "")
+                logging.info("Registering %s notifier" % notifier_cls_name)
+
+                try:
+                    notifier_cls = getattr(module, notifier_cls_name)
+                except AttributeError:
+                    logging.info("%s notifier class should contain %s class" % (module_name, notifier_cls_name))
+                    sys.exit(-1)
+
+                self.notifiers.append(notifier_cls(client, info, owner))
+
+
     def get_client(self):
         assert self.client != None, \
                 "Something went wrong. Client not inited. Quitting"
@@ -98,3 +127,10 @@ class Registrar:
             logging.warn("No menace found")
             return []
         return self.menaces
+
+    def get_notifiers(self):
+        if (self.notifiers == None or
+                len(self.notifiers) == 0):
+            logging.warn("No notifiers found")
+            return []
+        return self.notifiers

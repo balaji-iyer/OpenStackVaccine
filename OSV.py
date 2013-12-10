@@ -59,6 +59,7 @@ if __name__ == "__main__":
     osv.registrar.register_owner(conf["owner"])
     osv.registrar.register_client(conf["name"], conf["dir"], conf["client"], auth_info)
     osv.registrar.register_menaces(conf["dir"], conf["client"])
+    osv.registrar.register_notifier(options.client, conf["notifier"], conf["owner"])
 
 
     osv.scheduler.start(osv, conf.get("schedule", {}))

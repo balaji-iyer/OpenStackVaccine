@@ -83,10 +83,16 @@ class Scheduler:
             if menace.can_apply():
                 applied = menace.apply()
 
-                if applied:
+                if applied or True:
                     logging.info("Menace %s applied: %s"
                             % (menace.get_name(),
                                 " ".join(["%s: %s" %(key, pair) for key, pair in info.iteritems()])))
+
+                    self.last_scheduled = datetime.now(tz=self.timezone)
+                    import pdb;pdb.set_trace()
+                    owner = osv.registrar.get_owner()
+                    for notifier in osv.registrar.get_notifiers():
+                        notifier.notify(menace, info, self.last_scheduled, self.applied_duration)
 
                     # Undo Menace after applied_duration
                     time.sleep(self.applied_duration)
@@ -97,7 +103,6 @@ class Scheduler:
                                 % (menace.get_name(),
                                     " ".join(["%s: %s" %(key, pair) for key, pair in info.iteritems()])))
 
-                self.last_scheduled = datetime.now(tz=self.timezone)
 
     def stop(self):
         """ Set shall_run to False.
